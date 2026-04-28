@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{484ec8d7-a49b-49df-8ea5-a8ab2849a7bf}">
+		<property name="assetPath">
+			<value>Player/Footsteps/Rubber_04.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>96</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.75</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{b32c8f79-ea3c-44a9-9f2e-70b93f79dc97}</destination>
+		</relationship>
+	</object>
+</objects>

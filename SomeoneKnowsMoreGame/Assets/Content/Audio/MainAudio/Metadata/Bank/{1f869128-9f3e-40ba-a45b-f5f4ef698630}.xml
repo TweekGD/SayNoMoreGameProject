@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="Bank" id="{1f869128-9f3e-40ba-a45b-f5f4ef698630}">
+		<property name="name">
+			<value>Voice Chat</value>
+		</property>
+		<relationship name="folder">
+			<destination>{7387a6d0-dabb-4fc0-80ca-3519219113cb}</destination>
+		</relationship>
+	</object>
+</objects>
