@@ -6,7 +6,6 @@ public class PlayerInfo : NetworkBehaviour
 {
     [SyncVar(hook = nameof(OnPlayerNameChanged))] public string playerName;
     [SyncVar] public Sprite avatarSprite;
-    [SyncVar] public PlayerRoomsData playerRoomsData;
 
     [Header("Default Player Info")]
     public string defaultName = "Player";
@@ -93,18 +92,11 @@ public class PlayerInfo : NetworkBehaviour
         avatarSprite = avatar;
 
         if (PlayerListManager.Instance != null 
-            && PlayerPointsManager.Instance != null
-            && PlayerRoomsManager.Instance != null)
+            && PlayerPointsManager.Instance != null)
         {
             PlayerListManager.Instance.AddPlayer(netId, playerName, avatarSprite, _mirrorSteamworksVoice);
             PlayerPointsManager.Instance.AddPlayer(netId, playerName, avatarSprite, 0);
-            PlayerRoomsManager.Instance.SetPlayerRoomsData(netId);
         }
-    }
-    [Server]
-    public void ServerSetPlayerRoomsData(PlayerRoomsData _playerRoomsData) 
-    {
-        playerRoomsData = _playerRoomsData;
     }
 
     [Server]
@@ -115,9 +107,6 @@ public class PlayerInfo : NetworkBehaviour
 
         if (PlayerPointsManager.Instance != null)
             PlayerPointsManager.Instance.RemovePlayer(netId);
-
-        if (PlayerRoomsManager.Instance != null)
-            PlayerRoomsManager.Instance.RemoveOccupiedRoom(netId);
     }
 
     public override void OnStopServer()
@@ -129,8 +118,5 @@ public class PlayerInfo : NetworkBehaviour
 
         if (PlayerPointsManager.Instance != null)
             PlayerPointsManager.Instance.RemovePlayer(netId);
-
-        if (PlayerRoomsManager.Instance != null)
-            PlayerRoomsManager.Instance.RemoveOccupiedRoom(netId);
     }
 }

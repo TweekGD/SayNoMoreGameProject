@@ -106,11 +106,6 @@ public class RoundManager : NetworkBehaviour
         playerComponentData.RoundDescriptionPanel.StartDescriptionPanel(text, () =>
         {
             CmdNotifyPanelFinished();
-        }, 
-        () => 
-        {
-            Vector3 teleportPos = playerComponentData.PlayerInfo.playerRoomsData.spawnPosition;
-            playerComponentData.PlayerTeleporter.TeleportPlayer(teleportPos);
         });
     }
 
