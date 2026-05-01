@@ -91,12 +91,8 @@ public class PlayerInfo : NetworkBehaviour
         playerName = name;
         avatarSprite = avatar;
 
-        if (PlayerListManager.Instance != null 
-            && PlayerPointsManager.Instance != null)
-        {
+        if (PlayerListManager.Instance != null )
             PlayerListManager.Instance.AddPlayer(netId, playerName, avatarSprite, _mirrorSteamworksVoice);
-            PlayerPointsManager.Instance.AddPlayer(netId, playerName, avatarSprite, 0);
-        }
     }
 
     [Server]
@@ -104,9 +100,6 @@ public class PlayerInfo : NetworkBehaviour
     {
         if (PlayerListManager.Instance != null)
             PlayerListManager.Instance.RemovePlayer(netId);
-
-        if (PlayerPointsManager.Instance != null)
-            PlayerPointsManager.Instance.RemovePlayer(netId);
     }
 
     public override void OnStopServer()
@@ -115,8 +108,5 @@ public class PlayerInfo : NetworkBehaviour
 
         if (PlayerListManager.Instance != null)
             PlayerListManager.Instance.RemovePlayer(netId);
-
-        if (PlayerPointsManager.Instance != null)
-            PlayerPointsManager.Instance.RemovePlayer(netId);
     }
 }

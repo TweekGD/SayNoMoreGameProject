@@ -54,32 +54,6 @@ MonoBehaviour:
   MinDistance: 0
   MaxDistance: 0
   Length: 0
---- !u!114 &-7825856474534702915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/VoiceChat/VoiceChatMode
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
-  Name: VoiceChatMode
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 3908247335
-    data2: 1095286811
-  Type: 2
-  IsGlobal: 0
-  Labels:
-  - 3D
-  - 2D
-  Exists: 1
 --- !u!114 &-6158077580740912869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,10 +96,10 @@ MonoBehaviour:
   Path: Assets/Content/Audio/MainAudio/Build/Desktop/Voice Chat.bank
   Name: Voice Chat
   StudioPath: bank:/Voice Chat
-  lastModified: 639130129502867933
+  lastModified: 639132613982041463
   FileSizes:
   - Name: Desktop
-    Value: 4440
+    Value: 2180
   Exists: 1
 --- !u!114 &-5204583891064151197
 MonoBehaviour:
@@ -142,10 +116,10 @@ MonoBehaviour:
   Path: Assets/Content/Audio/MainAudio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639130129497786545
+  lastModified: 639132613981621251
   FileSizes:
   - Name: Desktop
-    Value: 1554
+    Value: 1242
   Exists: 1
 --- !u!114 &-2757425456596434699
 MonoBehaviour:
@@ -167,33 +141,6 @@ MonoBehaviour:
   - Name: Desktop
     Value: 506
   Exists: 1
---- !u!114 &-1982960348349670311
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: snapshot:/Hallway
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: snapshot:/Hallway
-  Guid:
-    Data1: -2087503376
-    Data2: 1125261756
-    Data3: -1134910823
-    Data4: -116755301
-  Banks:
-  - {fileID: -994025381358938615}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 0
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 0
-  Length: 0
 --- !u!114 &-994025381358938615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,10 +156,10 @@ MonoBehaviour:
   Path: Assets/Content/Audio/MainAudio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639130129497766563
+  lastModified: 639132613981601008
   FileSizes:
   - Name: Desktop
-    Value: 7570
+    Value: 4656
   Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -235,10 +182,6 @@ MonoBehaviour:
   - {fileID: -5899309159995214947}
   EditorEvents:
   - {fileID: -7939966237550222736}
-  - {fileID: 6064634901986357675}
-  - {fileID: 6437520580931825474}
-  - {fileID: -1982960348349670311}
-  - {fileID: 2517644109964706757}
   - {fileID: -8018100369177434958}
   - {fileID: -6158077580740912869}
   - {fileID: 521685083320549821}
@@ -248,24 +191,16 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: -5204583891064151197}
   cacheVersion: 131859
-  cacheTime: 639130129502867933
+  cacheTime: 639132613982041463
   SerializableEventsDict:
   - key: snapshot:/Living Room
     index: 0
-  - key: snapshot:/High Reverb
-    index: 1
-  - key: snapshot:/Elevator
-    index: 2
-  - key: snapshot:/Hallway
-    index: 3
-  - key: event:/Player/Footsteps/Step Sound
-    index: 4
   - key: event:/UI/Click/Highlight
-    index: 5
+    index: 1
   - key: event:/UI/Click/Click
-    index: 6
+    index: 2
   - key: event:/VoiceChat
-    index: 7
+    index: 3
 --- !u!114 &521685083320549821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -289,117 +224,10 @@ MonoBehaviour:
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
-  Parameters:
-  - {fileID: -7825856474534702915}
-  - {fileID: 5211849546340245069}
+  Parameters: []
   MinDistance: 1
   MaxDistance: 10
   Length: 1000
---- !u!114 &2517644109964706757
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Player/Footsteps/Step Sound
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Player/Footsteps/Step Sound
-  Guid:
-    Data1: 526259421
-    Data2: 1236570493
-    Data3: 2122724496
-    Data4: 912946002
-  Banks:
-  - {fileID: 8051052518361515334}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 4
-  Length: 640
---- !u!114 &5211849546340245069
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/VoiceChat/AudioOcclusion
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
-  Name: AudioOcclusion
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 855671155
-    data2: 1055832011
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
---- !u!114 &6064634901986357675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: snapshot:/High Reverb
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: snapshot:/High Reverb
-  Guid:
-    Data1: -1355706202
-    Data2: 1305713804
-    Data3: -1205218163
-    Data4: -1657156197
-  Banks:
-  - {fileID: -994025381358938615}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 0
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 0
-  Length: 0
---- !u!114 &6437520580931825474
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: snapshot:/Elevator
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: snapshot:/Elevator
-  Guid:
-    Data1: 1599621552
-    Data2: 1155692459
-    Data3: 1692693896
-    Data4: 961469991
-  Banks:
-  - {fileID: -994025381358938615}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 0
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 0
-  Length: 0
 --- !u!114 &6780426667772924214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,8 +263,8 @@ MonoBehaviour:
   Path: Assets/Content/Audio/MainAudio/Build/Desktop/SFX.bank
   Name: SFX
   StudioPath: bank:/SFX
-  lastModified: 639130129502564507
+  lastModified: 639132613981831520
   FileSizes:
   - Name: Desktop
-    Value: 25600
+    Value: 506
   Exists: 1
