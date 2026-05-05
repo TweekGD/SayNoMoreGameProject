@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 2080666281}
   - component: {fileID: 2080666280}
   m_Layer: 0
-  m_Name: Boostrap Object
+  m_Name: Bootstrap Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
