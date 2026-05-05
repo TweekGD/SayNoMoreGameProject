@@ -10,15 +10,14 @@ public class KickManager : NetworkBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) 
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
         {
             Destroy(gameObject);
-            return; 
-        
         }
-        Instance = this;
-
-        DontDestroyOnLoad(gameObject);
     }
 
     public override void OnStartServer()

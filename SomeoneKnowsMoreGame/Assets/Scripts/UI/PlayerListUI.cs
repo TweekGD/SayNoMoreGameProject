@@ -24,23 +24,23 @@ public class UIPlayerList : NetworkBehaviour
             AddPlayerEntry(player);
     }
 
-    private void OnPlayersChanged(SyncList<PlayerDataUI>.Operation op, int index, PlayerDataUI oldItem, PlayerDataUI newItem)
+    private void OnPlayersChanged(SyncList<PlayerData>.Operation op, int index, PlayerData oldItem, PlayerData newItem)
     {
         switch (op)
         {
-            case SyncList<PlayerDataUI>.Operation.OP_ADD:
+            case SyncList<PlayerData>.Operation.OP_ADD:
                 AddPlayerEntry(newItem);
                 break;
-            case SyncList<PlayerDataUI>.Operation.OP_REMOVEAT:
+            case SyncList<PlayerData>.Operation.OP_REMOVEAT:
                 RemovePlayerEntry(oldItem.netId);
                 break;
-            case SyncList<PlayerDataUI>.Operation.OP_SET:
+            case SyncList<PlayerData>.Operation.OP_SET:
                 UpdatePlayerEntry(newItem);
                 break;
         }
     }
 
-    private void AddPlayerEntry(PlayerDataUI player)
+    private void AddPlayerEntry(PlayerData player)
     {
         if (entries.ContainsKey(player.netId)) return;
 
@@ -62,7 +62,7 @@ public class UIPlayerList : NetworkBehaviour
         }
     }
 
-    private void UpdatePlayerEntry(PlayerDataUI player)
+    private void UpdatePlayerEntry(PlayerData player)
     {
         if (entries.TryGetValue(player.netId, out GameObject entry))
         {

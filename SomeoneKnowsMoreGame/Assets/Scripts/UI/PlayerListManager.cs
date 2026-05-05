@@ -5,14 +5,18 @@ public class PlayerListManager : NetworkBehaviour
 {
     public static PlayerListManager Instance;
 
-    public readonly SyncList<PlayerDataUI> allPlayers = new SyncList<PlayerDataUI>();
+    public readonly SyncList<PlayerData> allPlayers = new SyncList<PlayerData>();
 
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+        }
         else
+        {
             Destroy(gameObject);
+        }
     }
 
     [Server]
@@ -28,7 +32,7 @@ public class PlayerListManager : NetworkBehaviour
             }
         }
 
-        PlayerDataUI newPlayer = new PlayerDataUI(netId, playerName, avatarSprite, isHost, mirrorSteamworksVoice);
+        PlayerData newPlayer = new PlayerData(netId, playerName, avatarSprite, isHost, mirrorSteamworksVoice);
         allPlayers.Add(newPlayer);
         Debug.Log($"Player added to player list: {playerName} (ID={netId}, isHost={isHost})");
     }
@@ -40,7 +44,7 @@ public class PlayerListManager : NetworkBehaviour
         {
             if (allPlayers[i].netId == netId)
             {
-                PlayerDataUI removed = allPlayers[i];
+                PlayerData removed = allPlayers[i];
                 allPlayers.RemoveAt(i);
                 Debug.Log($"Player removed in player list: {removed.playerName} (ID={netId})");
                 break;

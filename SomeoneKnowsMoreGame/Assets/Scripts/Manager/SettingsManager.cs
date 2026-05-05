@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -84,6 +86,18 @@ public class SettingsManager : MonoBehaviour
     public int LanguageCount => languages.Length;
     public int MicrophoneModeCount => microphoneModes.Length;
     public int ScreenModeCount => screenModes.Length;
+    public int FpsStepIndex => fpsStepIndex;
+    public int FpsStepsCount => fpsSteps.Length;
+    public string[] FpsStepLabels
+    {
+        get
+        {
+            string[] labels = new string[fpsSteps.Length];
+            for (int i = 0; i < fpsSteps.Length; i++)
+                labels[i] = fpsSteps[i].ToString();
+            return labels;
+        }
+    }
 
     private FMOD.System coreSystem;
 
@@ -213,54 +227,63 @@ public class SettingsManager : MonoBehaviour
     private int WrapIndex(int current, int direction, int count) =>
         (current + direction + count) % count;
 
-    public void StepLanguage(int direction)
+    public void SetLanguageFromDropdown(int index)
     {
-        languageIndex = WrapIndex(languageIndex, direction, languages.Length);
+        languageIndex = Mathf.Clamp(index, 0, languages.Length - 1);
         SaveSettings();
         OnLanguageChanged?.Invoke();
     }
 
-    public void StepSensitivity(int direction)
+    public void SetSensitivityFromSlider(float value)
     {
-        sensitivityParameter = Mathf.Clamp(sensitivityParameter + direction * 0.05f, 0.05f, 1f);
+        sensitivityParameter = Mathf.Clamp(value, 0.05f, 1f);
         SaveSettings();
         OnSensitivityChanged?.Invoke();
     }
 
-    public void StepMasterVolume(int direction)
+    public void SetMasterVolumeFromSlider(float value)
     {
-        masterVolumeParameter = Mathf.Clamp(masterVolumeParameter + direction * 0.1f, 0f, 2f);
+        masterVolumeParameter = Mathf.Clamp(value, 0f, 2f);
         AudioListener.volume = masterVolumeParameter;
         SaveSettings();
         OnMasterVolumeChanged?.Invoke();
     }
 
-    public void StepMusicVolume(int direction)
+    public void SetMusicVolumeFromSlider(float value)
     {
-        musicVolumeParameter = Mathf.Clamp(musicVolumeParameter + direction * 0.1f, 0f, 2f);
+        musicVolumeParameter = Mathf.Clamp(value, 0f, 2f);
         SaveSettings();
         OnMusicVolumeChanged?.Invoke();
     }
 
-    public void StepSFXVolume(int direction)
+    public void SetSFXVolumeFromSlider(float value)
     {
-        sfxVolumeParameter = Mathf.Clamp(sfxVolumeParameter + direction * 0.1f, 0f, 2f);
+        sfxVolumeParameter = Mathf.Clamp(value, 0f, 2f);
         SaveSettings();
         OnSFXVolumeChanged?.Invoke();
     }
 
-    public void StepUIVolume(int direction)
+    public void SetUIVolumeFromSlider(float value)
     {
-        uiVolumeParameter = Mathf.Clamp(uiVolumeParameter + direction * 0.1f, 0f, 2f);
+        uiVolumeParameter = Mathf.Clamp(value, 0f, 2f);
         SaveSettings();
         OnUIVolumeChanged?.Invoke();
     }
 
-    public void StepVoiceVolume(int direction)
+    public void SetVoiceVolumeFromSlider(float value)
     {
-        voiceVolumeParameter = Mathf.Clamp(voiceVolumeParameter + direction * 0.1f, 0f, 2f);
+        voiceVolumeParameter = Mathf.Clamp(value, 0f, 2f);
         SaveSettings();
         OnVoiceVolumeChanged?.Invoke();
+    }
+
+    public void SetFpsLimitFromSlider(float value)
+    {
+        fpsStepIndex = Mathf.Clamp(Mathf.RoundToInt(value), 0, fpsSteps.Length - 1);
+        fpsLimitParameter = fpsSteps[fpsStepIndex];
+        Application.targetFrameRate = (int)fpsLimitParameter;
+        SaveSettings();
+        OnFpsLimitChanged?.Invoke();
     }
 
     public void StepMicrophoneMode(int direction)
@@ -270,30 +293,21 @@ public class SettingsManager : MonoBehaviour
         OnMicrophoneModeChanged?.Invoke();
     }
 
-    public void StepScreenResolution(int direction)
+    public void SetScreenResolutionFromDropdown(int index)
     {
         if (FilteredResolutions.Count == 0) return;
-        screenResolutionIndex = WrapIndex(screenResolutionIndex, -direction, FilteredResolutions.Count);
+        screenResolutionIndex = Mathf.Clamp(index, 0, FilteredResolutions.Count - 1);
         ApplyScreenSettings();
         SaveSettings();
         OnScreenResolutionChanged?.Invoke();
     }
 
-    public void StepScreenMode(int direction)
+    public void SetScreenModeFromDropdown(int index)
     {
-        screenModeIndex = WrapIndex(screenModeIndex, direction, screenModes.Length);
+        screenModeIndex = Mathf.Clamp(index, 0, screenModes.Length - 1);
         ApplyScreenSettings();
         SaveSettings();
         OnScreenModeChanged?.Invoke();
-    }
-
-    public void StepFpsLimit(int direction)
-    {
-        fpsStepIndex = WrapIndex(fpsStepIndex, direction, fpsSteps.Length);
-        fpsLimitParameter = fpsSteps[fpsStepIndex];
-        Application.targetFrameRate = (int)fpsLimitParameter;
-        SaveSettings();
-        OnFpsLimitChanged?.Invoke();
     }
 
     public void StepVSync(int direction)

@@ -115,6 +115,28 @@ MonoBehaviour:
   rounded:
     m_OverrideState: 1
     m_Value: 0
+--- !u!114 &-2764502052076911346
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ff6413a4aa09c9438e2f84d60ca7026, type: 3}
+  m_Name: RetroPosterizeVolumeComponent
+  m_EditorClassIdentifier: Assembly-CSharp::RetroPosterizeVolumeComponent
+  active: 1
+  posterizeLevels:
+    m_OverrideState: 1
+    m_Value: 16
+  ditherStrength:
+    m_OverrideState: 1
+    m_Value: 0.01
+  pixelSize:
+    m_OverrideState: 1
+    m_Value: 3
 --- !u!114 &-1633195377308842755
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -212,6 +234,7 @@ MonoBehaviour:
   - {fileID: -3357603926938260329}
   - {fileID: -578616952582826131}
   - {fileID: -1633195377308842755}
+  - {fileID: -2764502052076911346}
 --- !u!114 &849379129802519247
 MonoBehaviour:
   m_ObjectHideFlags: 3

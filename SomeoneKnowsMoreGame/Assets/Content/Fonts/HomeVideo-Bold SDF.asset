@@ -17,24 +17,24 @@ MonoBehaviour:
     m_FaceIndex: 0
     m_FamilyName: Home Video
     m_StyleName: Bold
-    m_PointSize: 114
+    m_PointSize: 116
     m_Scale: 1
     m_UnitsPerEM: 1000
-    m_LineHeight: 102.6
-    m_AscentLine: 91.200005
-    m_CapLine: 92
-    m_MeanLine: 92
+    m_LineHeight: 104.4
+    m_AscentLine: 92.8
+    m_CapLine: 93
+    m_MeanLine: 93
     m_Baseline: 0
-    m_DescentLine: -11.400001
-    m_SuperscriptOffset: 91.200005
+    m_DescentLine: -11.6
+    m_SuperscriptOffset: 92.8
     m_SuperscriptSize: 0.5
-    m_SubscriptOffset: -11.400001
+    m_SubscriptOffset: -11.6
     m_SubscriptSize: 0.5
-    m_UnderlineOffset: -33.288002
-    m_UnderlineThickness: 17.1
-    m_StrikethroughOffset: 36.8
-    m_StrikethroughThickness: 17.1
-    m_TabWidth: 68
+    m_UnderlineOffset: -33.872
+    m_UnderlineThickness: 17.4
+    m_StrikethroughOffset: 37.2
+    m_StrikethroughThickness: 17.4
+    m_TabWidth: 70
   m_Material: {fileID: 5617622552523922108}
   m_SourceFontFileGUID: b1b56374b5e266b449099a25a15a6876
   m_CreationSettings:
@@ -42,19 +42,19 @@ MonoBehaviour:
     sourceFontFileGUID: b1b56374b5e266b449099a25a15a6876
     faceIndex: 0
     pointSizeSamplingMode: 0
-    pointSize: 114
+    pointSize: 116
     padding: 9
     paddingMode: 2
     packingMode: 4
     atlasWidth: 2048
     atlasHeight: 2048
-    characterSetSelectionMode: 5
-    characterSequence: 32-126,160-255,1024-1279
+    characterSetSelectionMode: 6
+    characterSequence: 20-7E,A0-A9,AB-B1,B4-B8,BB,BF-FF,400-45F,462-463,472-473,480-481,48C-48D,490-493,496-49B,49E-4A5,4AA-4AB,4AE-4B3,4B8-4C2,4CF-4F5,4F8-4F9,2026
     referencedFontAssetGUID: a318bdbcec398884bb3e58093f1d32a0
     referencedTextAssetGUID: 
     fontStyle: 0
     fontStyleModifier: 0
-    renderMode: 4165
+    renderMode: 4121
     includeFontFeatures: 0
   m_SourceFontFile: {fileID: 12800000, guid: b1b56374b5e266b449099a25a15a6876, type: 3}
   m_SourceFontFilePath: 
@@ -71,13 +71,13 @@ MonoBehaviour:
   m_AtlasWidth: 2048
   m_AtlasHeight: 2048
   m_AtlasPadding: 9
-  m_AtlasRenderMode: 4165
+  m_AtlasRenderMode: 4121
   m_UsedGlyphRects: []
   m_FreeGlyphRects:
   - m_X: 0
     m_Y: 0
-    m_Width: 2047
-    m_Height: 2047
+    m_Width: 2048
+    m_Height: 2048
   m_FontFeatureTable:
     m_MultipleSubstitutionRecords: []
     m_LigatureSubstitutionRecords: []

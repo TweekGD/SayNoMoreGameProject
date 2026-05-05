@@ -18,6 +18,7 @@ public class LobbySettingsManager : MonoBehaviour
 
     [SerializeField] private ArrowControl maxPlayersArrowControl;
     [SerializeField] private ArrowControl lobbyTypeArrowControl;
+    [SerializeField] private Button startButton;
 
     private readonly string[] lobbyTypes = { "Public", "Private", "FriendsOnly" };
     private readonly int minPlayers = 4;
@@ -37,6 +38,11 @@ public class LobbySettingsManager : MonoBehaviour
     {
         if (Instance == null)
             Instance = this;
+
+        startButton.onClick.RemoveAllListeners();
+
+        if (SteamLobby.Instance != null)
+            startButton.onClick.AddListener(SteamLobby.Instance.HostLobby);
     }
 
     private void Start()

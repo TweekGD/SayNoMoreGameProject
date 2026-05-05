@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public struct PlayerDataUI
+public struct PlayerData
 {
     public uint netId;
     public string playerName;
@@ -10,7 +10,7 @@ public struct PlayerDataUI
     public bool isHost;
     public MirrorSteamworksVoice mirrorSteamworksVoice;
 
-    public PlayerDataUI(uint id, string name, Sprite avatar, bool host, MirrorSteamworksVoice voice)
+    public PlayerData(uint id, string name, Sprite avatar, bool host, MirrorSteamworksVoice voice)
     {
         netId = id;
         playerName = name;
