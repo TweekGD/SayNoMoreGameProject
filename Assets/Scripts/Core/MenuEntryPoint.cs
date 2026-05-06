@@ -16,7 +16,6 @@ public class MenuEntryPoint : MonoBehaviour, ISceneEntryPoint
         foreach (var prefab in menuPrefabs)
         {
             var instance = Instantiate(prefab);
-            DontDestroyOnLoad(instance);
         }
     }
 }

@@ -24,20 +24,8 @@ public class AudioManager : MonoBehaviour
     public EventInstance musicEventInstance;
 
     private SettingsManager settingsManager;
-    public static AudioManager Instance { get; private set; }
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-
-        DontDestroyOnLoad(gameObject);
-
         eventInstances = new List<EventInstance>();
         eventEmitters = new List<StudioEventEmitter>();
 
@@ -46,31 +34,42 @@ public class AudioManager : MonoBehaviour
         musicBus = RuntimeManager.GetBus("bus:/Music");
         UIBus = RuntimeManager.GetBus("bus:/UI");
         voiceChatBus = RuntimeManager.GetBus("bus:/Voice Chat");
+
+        if (settingsManager == null)
+            settingsManager = SettingsManager.Instance;
+
+        if (settingsManager != null)
+        {
+            settingsManager.OnMasterVolumeChanged += ChangeAllVolumeValue;
+            settingsManager.OnMusicVolumeChanged += ChangeAllVolumeValue;
+            settingsManager.OnSFXVolumeChanged += ChangeAllVolumeValue;
+            settingsManager.OnUIVolumeChanged += ChangeAllVolumeValue;
+            settingsManager.OnVoiceVolumeChanged += ChangeAllVolumeValue;
+        }
+    }
+    private void OnDisable()
+    {
+        if (settingsManager != null)
+        {
+            settingsManager.OnMasterVolumeChanged -= ChangeAllVolumeValue;
+            settingsManager.OnMusicVolumeChanged -= ChangeAllVolumeValue;
+            settingsManager.OnSFXVolumeChanged -= ChangeAllVolumeValue;
+            settingsManager.OnUIVolumeChanged -= ChangeAllVolumeValue;
+            settingsManager.OnVoiceVolumeChanged -= ChangeAllVolumeValue;
+        }
     }
     private void Start()
     {
-        ChangeVolumes();
+        ChangeAllVolumeValue();
     }
-    private void Update()
+    private void ChangeAllVolumeValue()
     {
-        ChangeVolumes();
+        GetAllSavedVolumes();
+        UpdateAllVolumeValue();
     }
-    private void ChangeVolumes()
+    private void GetAllSavedVolumes()
     {
-        GetSavedVolumes();
-        UpdateVolumeValue();
-    }
-    private void GetSavedVolumes()
-    {
-        if (settingsManager == null) 
-        {
-            settingsManager = SettingsManager.Instance;
-
-            if (settingsManager == null)
-            {
-                return;
-            }
-        }
+        if (settingsManager == null) { return; }
 
         masterVolume = settingsManager.MasterVolume;
         musicVolume = settingsManager.MusicVolume;
@@ -78,7 +77,7 @@ public class AudioManager : MonoBehaviour
         UIVolume = settingsManager.UIVolume;
         voiceChatVolume = settingsManager.VoiceVolume;
     }
-    private void UpdateVolumeValue()
+    private void UpdateAllVolumeValue()
     {
         masterBus.setVolume(masterVolume);
         musicBus.setVolume(musicVolume);

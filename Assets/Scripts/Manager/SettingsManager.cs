@@ -7,8 +7,6 @@ using TMPro;
 
 public class SettingsManager : MonoBehaviour
 {
-    public static SettingsManager Instance { get; private set; }
-
     private readonly string[] languages = { "English", "Russian", "Spain" };
     private readonly string[] microphoneModes = { "PushToTalk", "Toggle" };
     private readonly string[] screenModes = { "Fullscreen", "Windowed", "Borderless" };
@@ -103,9 +101,6 @@ public class SettingsManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-
         coreSystem = FMODUnity.RuntimeManager.CoreSystem;
 
         PopulateResolutionList();

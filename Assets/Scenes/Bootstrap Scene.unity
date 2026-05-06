@@ -150,10 +150,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bootstrap
   firstSceneName: Menu Scene
   persistentPrefabs:
-  - {fileID: 4025805626457974487, guid: ab4475adebade914e9262d39e423bf92, type: 3}
-  - {fileID: 7044580894077702967, guid: 5cad57b197d7f2b4eb51a907089f7700, type: 3}
   - {fileID: 6274351425710423114, guid: 89a37c5bfb552ab4f8e1934e4ebcbc64, type: 3}
   - {fileID: 5604421701461688567, guid: f59daea9d01919049bdb286edfedf8cf, type: 3}
+  - {fileID: 4025805626457974487, guid: ab4475adebade914e9262d39e423bf92, type: 3}
+  - {fileID: 7044580894077702967, guid: 5cad57b197d7f2b4eb51a907089f7700, type: 3}
 --- !u!4 &2080666281
 Transform:
   m_ObjectHideFlags: 0

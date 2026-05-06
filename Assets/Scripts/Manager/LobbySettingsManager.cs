@@ -14,8 +14,6 @@ public class LobbySettingsManager : MonoBehaviour
 
     public enum LobbyType { Public, Private, FriendsOnly }
 
-    public static LobbySettingsManager Instance { get; private set; }
-
     [SerializeField] private ArrowControl maxPlayersArrowControl;
     [SerializeField] private ArrowControl lobbyTypeArrowControl;
     [SerializeField] private Button startButton;
@@ -36,9 +34,6 @@ public class LobbySettingsManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-
         startButton.onClick.RemoveAllListeners();
 
         if (SteamLobby.Instance != null)

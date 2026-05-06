@@ -4,21 +4,7 @@ using UnityEngine;
 
 public class KickManager : NetworkBehaviour
 {
-    public static KickManager Instance { get; private set; }
-
     private readonly HashSet<string> blacklist = new HashSet<string>();
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     public override void OnStartServer()
     {

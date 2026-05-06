@@ -16,7 +16,6 @@ public class GameEntryPoint : MonoBehaviour, ISceneEntryPoint
         foreach (var prefab in gamePrefabs)
         {
             var instance = Instantiate(prefab);
-            DontDestroyOnLoad(instance);
         }
     }
 }

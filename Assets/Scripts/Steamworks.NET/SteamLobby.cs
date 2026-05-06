@@ -8,21 +8,8 @@ public class SteamLobby : MonoBehaviour
     protected Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
     protected Callback<LobbyEnter_t> lobbyEntered;
     private const string HostAddressKey = "HostAddress";
-    public static SteamLobby Instance { get; private set; }
     public CSteamID LobbyID { get; private set; }
-    private void Awake()
-    {
-        if (Instance == null || Instance != this)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
 
-        DontDestroyOnLoad(gameObject);
-    }
     private void Start()
     {
         networkManager = GetComponent<NetworkManager>();
