@@ -45,6 +45,14 @@ public class MirrorSteamworksVoice : NetworkBehaviour
     public float CurrentVolume => currentVolume;
     public enum MicrophoneMode { Toggle, PushToTalk }
 
+    private IInputManager inputManager;
+    private ISettingsManager settingsManager;
+
+    private void Awake()
+    {
+        inputManager = ServiceLocator.Get<IInputManager>();
+        settingsManager = ServiceLocator.Get<ISettingsManager>();
+    }
     private void Start()
     {
         _sampleRate = SteamUser.GetVoiceOptimalSampleRate();
@@ -56,23 +64,19 @@ public class MirrorSteamworksVoice : NetworkBehaviour
     }
     private void OnEnable()
     {
-        if (SettingsManager.Instance != null)
-            SettingsManager.Instance.OnMicrophoneModeChanged += LoadSavedSettings;
-        else
-            UnityEngine.Debug.LogWarning("SettingsManager not init!");
+        if (settingsManager != null)
+            settingsManager.GetParameter<IndexedParameter>("MicrophoneMode").OnChanged += LoadSavedSettings;
     }
     private void OnDisable()
     {
-        if (SettingsManager.Instance != null)
-            SettingsManager.Instance.OnMicrophoneModeChanged -= LoadSavedSettings;
-        else
-            UnityEngine.Debug.LogWarning("SettingsManager not init!");
+        if (settingsManager != null)
+            settingsManager.GetParameter<IndexedParameter>("MicrophoneMode").OnChanged -= LoadSavedSettings;
     }
     private void LoadSavedSettings()
     {
-        if (SettingsManager.Instance != null)
+        if (settingsManager != null)
         {
-            string micMode = SettingsManager.Instance.MicrophoneMode;
+            string micMode = settingsManager.GetParameter<IndexedParameter>("MicrophoneMode").Current;
 
             SetMicrophoneMode(micMode == "Toggle" ? MicrophoneMode.Toggle : MicrophoneMode.PushToTalk);
         }
@@ -262,9 +266,9 @@ public class MirrorSteamworksVoice : NetworkBehaviour
             return;
         }
 
-        if (InputManager.Instance == null) return;
+        if (inputManager == null) return;
 
-        float voiceInput = InputManager.Instance.VoiceChatInput;
+        float voiceInput = inputManager.GetInput<float>("Voice Chat");
 
         if (_microphoneMode == MicrophoneMode.Toggle)
             HandleToggleMode(voiceInput);

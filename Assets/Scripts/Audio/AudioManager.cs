@@ -3,7 +3,7 @@ using FMODUnity;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : MonoBehaviour, IAudioManager
 {
     public float masterVolume = 1;
     public float musicVolume = 1;
@@ -23,7 +23,7 @@ public class AudioManager : MonoBehaviour
     public EventInstance ambienceEventInstance;
     public EventInstance musicEventInstance;
 
-    private SettingsManager settingsManager;
+    private ISettingsManager settingsManager;
     private void Awake()
     {
         eventInstances = new List<EventInstance>();
@@ -35,28 +35,13 @@ public class AudioManager : MonoBehaviour
         UIBus = RuntimeManager.GetBus("bus:/UI");
         voiceChatBus = RuntimeManager.GetBus("bus:/Voice Chat");
 
-        if (settingsManager == null)
-            settingsManager = SettingsManager.Instance;
+        settingsManager = ServiceLocator.Get<ISettingsManager>();
 
-        if (settingsManager != null)
-        {
-            settingsManager.OnMasterVolumeChanged += ChangeAllVolumeValue;
-            settingsManager.OnMusicVolumeChanged += ChangeAllVolumeValue;
-            settingsManager.OnSFXVolumeChanged += ChangeAllVolumeValue;
-            settingsManager.OnUIVolumeChanged += ChangeAllVolumeValue;
-            settingsManager.OnVoiceVolumeChanged += ChangeAllVolumeValue;
-        }
+        if (settingsManager != null) { settingsManager.OnParametersChanged += ChangeAllVolumeValue; }
     }
     private void OnDisable()
     {
-        if (settingsManager != null)
-        {
-            settingsManager.OnMasterVolumeChanged -= ChangeAllVolumeValue;
-            settingsManager.OnMusicVolumeChanged -= ChangeAllVolumeValue;
-            settingsManager.OnSFXVolumeChanged -= ChangeAllVolumeValue;
-            settingsManager.OnUIVolumeChanged -= ChangeAllVolumeValue;
-            settingsManager.OnVoiceVolumeChanged -= ChangeAllVolumeValue;
-        }
+        if (settingsManager != null) { settingsManager.OnParametersChanged += ChangeAllVolumeValue; }
     }
     private void Start()
     {
@@ -71,11 +56,11 @@ public class AudioManager : MonoBehaviour
     {
         if (settingsManager == null) { return; }
 
-        masterVolume = settingsManager.MasterVolume;
-        musicVolume = settingsManager.MusicVolume;
-        SFXVolume = settingsManager.SFXVolume;
-        UIVolume = settingsManager.UIVolume;
-        voiceChatVolume = settingsManager.VoiceVolume;
+        masterVolume = settingsManager.GetParametersValue<float>("MasterVolume");
+        musicVolume = settingsManager.GetParametersValue<float>("MusicVolume");
+        SFXVolume = settingsManager.GetParametersValue<float>("SFXVolume");
+        UIVolume = settingsManager.GetParametersValue<float>("UIVolume");
+        voiceChatVolume = settingsManager.GetParametersValue<float>("VoiceVolume");
     }
     private void UpdateAllVolumeValue()
     {

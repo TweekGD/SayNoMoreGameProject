@@ -8,6 +8,11 @@ public class MenuCameraRotation : MonoBehaviour
     [SerializeField] private float smoothSpeed = 5f;
 
     private Vector2 cameraRotation;
+    private IInputManager inputManager;
+    private void Awake()
+    {
+        inputManager = ServiceLocator.Get<IInputManager>();
+    }
     private void Start()
     {
         Cursor.lockState = CursorLockMode.None;
@@ -19,8 +24,8 @@ public class MenuCameraRotation : MonoBehaviour
     }
     private void CameraRotation()
     {
-        cameraRotation.x += InputManager.Instance.LookInput.x * sensitivityValue;
-        cameraRotation.y += InputManager.Instance.LookInput.y * sensitivityValue;
+        cameraRotation.x += inputManager.GetInput<Vector2>("Look").x * sensitivityValue;
+        cameraRotation.y += inputManager.GetInput<Vector2>("Look").y * sensitivityValue;
 
         cameraRotation.x = Mathf.Clamp(cameraRotation.x, -cameraAngle, cameraAngle);
         cameraRotation.y = Mathf.Clamp(cameraRotation.y, -cameraAngle, cameraAngle);

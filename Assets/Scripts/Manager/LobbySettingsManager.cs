@@ -32,12 +32,16 @@ public class LobbySettingsManager : MonoBehaviour
     public LobbyType CurrentLobbyType => (LobbyType)_lobbyTypeIndex;
     public int MaxPlayers => _maxPlayers;
 
+    private ISteamLobby steamLobby;
+
     private void Awake()
     {
+        steamLobby = ServiceLocator.Get<ISteamLobby>();
+
         startButton.onClick.RemoveAllListeners();
 
-        if (SteamLobby.Instance != null)
-            startButton.onClick.AddListener(SteamLobby.Instance.HostLobby);
+        if (steamLobby != null)
+            startButton.onClick.AddListener(steamLobby.HostLobby);
     }
 
     private void Start()

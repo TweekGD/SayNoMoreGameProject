@@ -1,7 +1,7 @@
 using Mirror;
 using Steamworks;
 using UnityEngine;
-public class SteamLobby : MonoBehaviour
+public class SteamLobby : MonoBehaviour, ISteamLobby
 {
     private NetworkManager networkManager;
     protected Callback<LobbyCreated_t> lobbyCreated;
@@ -23,39 +23,8 @@ public class SteamLobby : MonoBehaviour
     }
     public void HostLobby()
     {
-        int playerLimit = 4;
-
         if (SteamManager.Initialized)
-        {
-            ELobbyType lobbyType = ELobbyType.k_ELobbyTypePublic;
-
-            if (LobbySettingsManager.Instance != null)
-            {
-                playerLimit = LobbySettingsManager.Instance.MaxPlayers;
-
-                switch (LobbySettingsManager.Instance.CurrentLobbyType)
-                {
-                    case LobbySettingsManager.LobbyType.Private:
-                        lobbyType = ELobbyType.k_ELobbyTypePrivate;
-                        break;
-                    case LobbySettingsManager.LobbyType.Public:
-                        lobbyType = ELobbyType.k_ELobbyTypePublic;
-                        break;
-                    case LobbySettingsManager.LobbyType.FriendsOnly:
-                        lobbyType = ELobbyType.k_ELobbyTypeFriendsOnly;
-                        break;
-                }
-            }
-
-            networkManager.maxConnections = playerLimit;
-            SteamMatchmaking.CreateLobby(lobbyType, playerLimit);
-        }
-        else
-        {
-            playerLimit = LobbySettingsManager.Instance.MaxPlayers;
-            networkManager.maxConnections = playerLimit;
-            networkManager.StartHost();
-        }
+            SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, networkManager.maxConnections);
     }
     public void LeaveLobby()
     {
@@ -69,13 +38,6 @@ public class SteamLobby : MonoBehaviour
                 networkManager.StopClient();
 
             LobbyID = default;
-        }
-        else
-        {
-            if (NetworkServer.active)
-                networkManager.StopHost();
-            else if (NetworkClient.active)
-                networkManager.StopClient();
         }
     }
     private void OnLobbyCreated(LobbyCreated_t callback)

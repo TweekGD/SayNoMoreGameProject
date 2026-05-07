@@ -18,8 +18,14 @@ public class PlayerCameraRotation : NetworkBehaviour
     private Vector2 smoothedInput;
     private Vector2 inputVelocity;
 
+    private IInputManager inputManager;
+    private ISettingsManager settingsManager;
+
     private void Awake()
     {
+        inputManager = ServiceLocator.Get<IInputManager>();
+        settingsManager = ServiceLocator.Get<ISettingsManager>();
+
         inputState = GetComponent<InputState>();
     }
 
@@ -49,7 +55,9 @@ public class PlayerCameraRotation : NetworkBehaviour
 
     private void CameraRotation()
     {
-        float sensitivityValue = SettingsManager.Instance != null ? SettingsManager.Instance.Sensitivity : 1f;
+        if (inputManager == null) { return; }
+
+        float sensitivityValue = settingsManager != null ? settingsManager.GetParametersValue<float>("Sensitivity") : 1f;
 
         if (inputState != null)
         {
@@ -59,7 +67,7 @@ public class PlayerCameraRotation : NetworkBehaviour
 
         if (!inputState.CameraIsLocked)
         {
-            currentInput = InputManager.Instance.LookInput * sensitivityValue;
+            currentInput = inputManager.GetInput<Vector2>("Look") * sensitivityValue;
 
             smoothedInput.x = Mathf.SmoothDamp(smoothedInput.x, currentInput.x, ref inputVelocity.x, smoothTime);
             smoothedInput.y = Mathf.SmoothDamp(smoothedInput.y, currentInput.y, ref inputVelocity.y, smoothTime);

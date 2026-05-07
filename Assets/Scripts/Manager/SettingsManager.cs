@@ -2,29 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
-public class SettingsManager : MonoBehaviour
+public class SettingsManager : MonoBehaviour, ISettingsManager
 {
-    private readonly string[] languages = { "English", "Russian", "Spain" };
-    private readonly string[] microphoneModes = { "PushToTalk", "Toggle" };
-    private readonly string[] screenModes = { "Fullscreen", "Windowed", "Borderless" };
-    private static readonly int[] fpsSteps = { 30, 60, 90, 120, 144, 180, 240, 360, 480 };
+    private static readonly string[] LanguageOptions = { "English", "Russian", "Spain" };
+    private static readonly string[] MicrophoneModeOptions = { "PushToTalk", "Toggle" };
+    private static readonly string[] ScreenModeOptions = { "Fullscreen", "Windowed", "Borderless" };
+    private static readonly int[] FpsSteps = { 30, 60, 90, 120, 144, 180, 240, 360, 480 };
 
-    private int languageIndex;
-    private float sensitivityParameter;
-    private float masterVolumeParameter;
-    private float musicVolumeParameter;
-    private float sfxVolumeParameter;
-    private float uiVolumeParameter;
-    private float voiceVolumeParameter;
-    private int microphoneModeIndex;
-    private int screenResolutionIndex;
-    private int screenModeIndex;
-    private float fpsLimitParameter;
-    private int fpsStepIndex;
-    private int vSyncParameter;
+    private IndexedParameter _language;
+    private SettingsParameter<float> _sensitivity;
+    private SettingsParameter<float> _masterVolume;
+    private SettingsParameter<float> _musicVolume;
+    private SettingsParameter<float> _sfxVolume;
+    private SettingsParameter<float> _uiVolume;
+    private SettingsParameter<float> _voiceVolume;
+    private IndexedParameter _microphoneMode;
+    private IndexedParameter _screenResolution;
+    private IndexedParameter _screenMode;
+    private SettingsParameter<int> _fpsStepIndex;
+    private SettingsParameter<int> _vSync;
 
     private string SavePath => Path.Combine(Application.persistentDataPath, "settings.json");
 
@@ -48,80 +45,103 @@ public class SettingsManager : MonoBehaviour
     public List<Resolution> FilteredResolutions { get; } = new List<Resolution>();
     public List<string> AllDevices { get; } = new List<string>();
 
-    public event Action OnLanguageChanged;
-    public event Action OnSensitivityChanged;
-    public event Action OnMasterVolumeChanged;
-    public event Action OnMusicVolumeChanged;
-    public event Action OnSFXVolumeChanged;
-    public event Action OnUIVolumeChanged;
-    public event Action OnVoiceVolumeChanged;
-    public event Action OnMicrophoneDeviceChanged;
-    public event Action OnMicrophoneModeChanged;
-    public event Action OnScreenResolutionChanged;
-    public event Action OnScreenModeChanged;
-    public event Action OnFpsLimitChanged;
-    public event Action OnVSyncChanged;
+    public event Action OnParametersChanged;
 
-    public string Language => languages[languageIndex];
-    public float Sensitivity => sensitivityParameter;
-    public float MasterVolume => masterVolumeParameter;
-    public float MusicVolume => musicVolumeParameter;
-    public float SFXVolume => sfxVolumeParameter;
-    public float UIVolume => uiVolumeParameter;
-    public float VoiceVolume => voiceVolumeParameter;
-    public string MicrophoneMode => microphoneModes[microphoneModeIndex];
-    public string ScreenResolution => FilteredResolutions.Count > 0
-        ? FilteredResolutions[screenResolutionIndex].width + "x" + FilteredResolutions[screenResolutionIndex].height
-        : "1920x1080";
-    public string ScreenMode => screenModes[screenModeIndex];
-    public float FpsLimit => fpsLimitParameter;
-    public int VSync => vSyncParameter;
+    public string Language => _language.Current;
+    public float Sensitivity => _sensitivity.Value;
+    public float MasterVolume => _masterVolume.Value;
+    public float MusicVolume => _musicVolume.Value;
+    public float SFXVolume => _sfxVolume.Value;
+    public float UIVolume => _uiVolume.Value;
+    public float VoiceVolume => _voiceVolume.Value;
+    public string MicrophoneMode => _microphoneMode.Current;
+    public string ScreenResolution => _screenResolution.Current;
+    public string ScreenMode => _screenMode.Current;
+    public float FpsLimit => FpsSteps[_fpsStepIndex.Value];
+    public int VSync => _vSync.Value;
 
-    public int LanguageIndex => languageIndex;
-    public int MicrophoneModeIndex => microphoneModeIndex;
-    public int ScreenResolutionIndex => screenResolutionIndex;
-    public int ScreenModeIndex => screenModeIndex;
-    public int LanguageCount => languages.Length;
-    public int MicrophoneModeCount => microphoneModes.Length;
-    public int ScreenModeCount => screenModes.Length;
-    public int FpsStepIndex => fpsStepIndex;
-    public int FpsStepsCount => fpsSteps.Length;
-    public string[] FpsStepLabels
-    {
-        get
-        {
-            string[] labels = new string[fpsSteps.Length];
-            for (int i = 0; i < fpsSteps.Length; i++)
-                labels[i] = fpsSteps[i].ToString();
-            return labels;
-        }
-    }
+    public int LanguageIndex => _language.Index;
+    public int MicrophoneModeIndex => _microphoneMode.Index;
+    public int ScreenResolutionIndex => _screenResolution.Index;
+    public int ScreenModeIndex => _screenMode.Index;
+    public int LanguageCount => _language.Count;
+    public int MicrophoneModeCount => _microphoneMode.Count;
+    public int ScreenModeCount => _screenMode.Count;
+    public int FpsStepIndex => _fpsStepIndex.Value;
+    public int FpsStepsCount => FpsSteps.Length;
+    public string[] FpsStepLabels => Array.ConvertAll(FpsSteps, x => x.ToString());
 
-    private FMOD.System coreSystem;
+    private FMOD.System _coreSystem;
 
     private void Awake()
     {
-        coreSystem = FMODUnity.RuntimeManager.CoreSystem;
+        _coreSystem = FMODUnity.RuntimeManager.CoreSystem;
 
         PopulateResolutionList();
         PopulateMicrophoneList();
 
+        InitParameters();
         LoadSettings();
         ApplyAllSettings();
     }
 
-    private int GetClosestFpsIndex(int target)
+    private void InitParameters()
+    {
+        string[] resLabels = BuildResolutionLabels();
+
+        _language = new IndexedParameter("Language", LanguageOptions);
+        _sensitivity = new SettingsParameter<float>("Sensitivity", 1f, v => Mathf.Clamp(v, 0.05f, 1f));
+        _masterVolume = new SettingsParameter<float>("MasterVolume", 1f, v => Mathf.Clamp(v, 0f, 2f), v => AudioListener.volume = v);
+        _musicVolume = new SettingsParameter<float>("MusicVolume", 1f, v => Mathf.Clamp(v, 0f, 2f));
+        _sfxVolume = new SettingsParameter<float>("SFXVolume", 1f, v => Mathf.Clamp(v, 0f, 2f));
+        _uiVolume = new SettingsParameter<float>("UIVolume", 1f, v => Mathf.Clamp(v, 0f, 2f));
+        _voiceVolume = new SettingsParameter<float>("VoiceVolume", 1f, v => Mathf.Clamp(v, 0f, 2f));
+        _microphoneMode = new IndexedParameter("MicrophoneMode", MicrophoneModeOptions);
+        _screenResolution = new IndexedParameter("ScreenResolution", resLabels, resLabels.Length - 1, _ => ApplyScreenSettings());
+        _screenMode = new IndexedParameter("ScreenMode", ScreenModeOptions, 0, _ => ApplyScreenSettings());
+        _fpsStepIndex = new SettingsParameter<int>("FpsStepIndex", GetClosestFpsIndex(120), v => Mathf.Clamp(v, 0, FpsSteps.Length - 1), v => Application.targetFrameRate = FpsSteps[v]);
+        _vSync = new SettingsParameter<int>("VSync", 0, v => Mathf.Clamp(v, 0, 1), v => QualitySettings.vSyncCount = v);
+
+        BuildParameterRegistry();
+        SubscribeAll();
+    }
+
+    private void SubscribeAll()
+    {
+        void Notify() { SaveSettings(); OnParametersChanged?.Invoke(); }
+
+        _language.OnChanged += Notify;
+        _sensitivity.OnChanged += Notify;
+        _masterVolume.OnChanged += Notify;
+        _musicVolume.OnChanged += Notify;
+        _sfxVolume.OnChanged += Notify;
+        _uiVolume.OnChanged += Notify;
+        _voiceVolume.OnChanged += Notify;
+        _microphoneMode.OnChanged += Notify;
+        _screenResolution.OnChanged += Notify;
+        _screenMode.OnChanged += Notify;
+        _fpsStepIndex.OnChanged += Notify;
+        _vSync.OnChanged += Notify;
+    }
+
+    private string[] BuildResolutionLabels()
+    {
+        string[] labels = new string[FilteredResolutions.Count];
+        for (int i = 0; i < FilteredResolutions.Count; i++)
+            labels[i] = FilteredResolutions[i].width + "x" + FilteredResolutions[i].height;
+        return labels;
+    }
+
+    private static int GetClosestFpsIndex(int target)
     {
         int closest = 0;
         int minDiff = int.MaxValue;
-        for (int i = 0; i < fpsSteps.Length; i++)
+        for (int i = 0; i < FpsSteps.Length; i++)
         {
-            int diff = Math.Abs(fpsSteps[i] - target);
-            if (diff < minDiff)
-            {
-                minDiff = diff;
-                closest = i;
-            }
+            int diff = Math.Abs(FpsSteps[i] - target);
+            if (diff >= minDiff) continue;
+            minDiff = diff;
+            closest = i;
         }
         return closest;
     }
@@ -143,43 +163,41 @@ public class SettingsManager : MonoBehaviour
             }
         }
 
-        languageIndex = Mathf.Clamp(data.languageIndex, 0, languages.Length - 1);
-        sensitivityParameter = Mathf.Clamp(data.sensitivity, 0.05f, 1f);
-        masterVolumeParameter = Mathf.Clamp(data.masterVolume, 0f, 2f);
-        musicVolumeParameter = Mathf.Clamp(data.musicVolume, 0f, 2f);
-        sfxVolumeParameter = Mathf.Clamp(data.sfxVolume, 0f, 2f);
-        uiVolumeParameter = Mathf.Clamp(data.uiVolume, 0f, 2f);
-        voiceVolumeParameter = Mathf.Clamp(data.voiceVolume, 0f, 2f);
-        microphoneModeIndex = Mathf.Clamp(data.microphoneModeIndex, 0, microphoneModes.Length - 1);
-        screenModeIndex = Mathf.Clamp(data.screenModeIndex, 0, screenModes.Length - 1);
-        vSyncParameter = Mathf.Clamp(data.vSync, 0, 1);
+        int fpsIdx = Array.IndexOf(FpsSteps, data.fpsLimit);
+        if (fpsIdx < 0) fpsIdx = GetClosestFpsIndex(data.fpsLimit);
 
-        int fpsIdx = Array.IndexOf(fpsSteps, data.fpsLimit);
-        if (fpsIdx < 0)
-            fpsIdx = GetClosestFpsIndex(data.fpsLimit);
-        fpsStepIndex = Mathf.Clamp(fpsIdx, 0, fpsSteps.Length - 1);
-        fpsLimitParameter = fpsSteps[fpsStepIndex];
+        int resIdx = Array.FindIndex(BuildResolutionLabels(), r => r == data.screenResolution);
 
-        int resIdx = FilteredResolutions.FindIndex(r => r.width + "x" + r.height == data.screenResolution);
-        screenResolutionIndex = Mathf.Clamp(resIdx, 0, Mathf.Max(0, FilteredResolutions.Count - 1));
+        _language.Set(data.languageIndex, silent: true);
+        _sensitivity.Set(data.sensitivity, silent: true);
+        _masterVolume.Set(data.masterVolume, silent: true);
+        _musicVolume.Set(data.musicVolume, silent: true);
+        _sfxVolume.Set(data.sfxVolume, silent: true);
+        _uiVolume.Set(data.uiVolume, silent: true);
+        _voiceVolume.Set(data.voiceVolume, silent: true);
+        _microphoneMode.Set(data.microphoneModeIndex, silent: true);
+        _screenResolution.Set(Mathf.Max(0, resIdx), silent: true);
+        _screenMode.Set(data.screenModeIndex, silent: true);
+        _fpsStepIndex.Set(fpsIdx, silent: true);
+        _vSync.Set(data.vSync, silent: true);
     }
 
     private void SaveSettings()
     {
         SettingsData data = new SettingsData
         {
-            languageIndex = languageIndex,
-            sensitivity = sensitivityParameter,
-            masterVolume = masterVolumeParameter,
-            musicVolume = musicVolumeParameter,
-            sfxVolume = sfxVolumeParameter,
-            uiVolume = uiVolumeParameter,
-            voiceVolume = voiceVolumeParameter,
-            microphoneModeIndex = microphoneModeIndex,
-            screenResolution = ScreenResolution,
-            screenModeIndex = screenModeIndex,
-            fpsLimit = (int)fpsLimitParameter,
-            vSync = vSyncParameter
+            languageIndex = _language.Index,
+            sensitivity = _sensitivity.Value,
+            masterVolume = _masterVolume.Value,
+            musicVolume = _musicVolume.Value,
+            sfxVolume = _sfxVolume.Value,
+            uiVolume = _uiVolume.Value,
+            voiceVolume = _voiceVolume.Value,
+            microphoneModeIndex = _microphoneMode.Index,
+            screenResolution = _screenResolution.Current,
+            screenModeIndex = _screenMode.Index,
+            fpsLimit = FpsSteps[_fpsStepIndex.Value],
+            vSync = _vSync.Value
         };
 
         try
@@ -195,12 +213,12 @@ public class SettingsManager : MonoBehaviour
     public void PopulateMicrophoneList()
     {
         AllDevices.Clear();
-        coreSystem.getRecordNumDrivers(out int numDrivers, out _);
+        _coreSystem.getRecordNumDrivers(out int numDrivers, out _);
         if (numDrivers == 0) return;
 
         for (int i = 0; i < numDrivers; i++)
         {
-            coreSystem.getRecordDriverInfo(i, out string name, 256, out _, out _, out _, out _, out _);
+            _coreSystem.getRecordDriverInfo(i, out string name, 256, out _, out _, out _, out _, out _);
             AllDevices.Add(name);
         }
     }
@@ -219,152 +237,136 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
-    private int WrapIndex(int current, int direction, int count) =>
-        (current + direction + count) % count;
-
-    public void SetLanguageFromDropdown(int index)
-    {
-        languageIndex = Mathf.Clamp(index, 0, languages.Length - 1);
-        SaveSettings();
-        OnLanguageChanged?.Invoke();
-    }
-
-    public void SetSensitivityFromSlider(float value)
-    {
-        sensitivityParameter = Mathf.Clamp(value, 0.05f, 1f);
-        SaveSettings();
-        OnSensitivityChanged?.Invoke();
-    }
-
-    public void SetMasterVolumeFromSlider(float value)
-    {
-        masterVolumeParameter = Mathf.Clamp(value, 0f, 2f);
-        AudioListener.volume = masterVolumeParameter;
-        SaveSettings();
-        OnMasterVolumeChanged?.Invoke();
-    }
-
-    public void SetMusicVolumeFromSlider(float value)
-    {
-        musicVolumeParameter = Mathf.Clamp(value, 0f, 2f);
-        SaveSettings();
-        OnMusicVolumeChanged?.Invoke();
-    }
-
-    public void SetSFXVolumeFromSlider(float value)
-    {
-        sfxVolumeParameter = Mathf.Clamp(value, 0f, 2f);
-        SaveSettings();
-        OnSFXVolumeChanged?.Invoke();
-    }
-
-    public void SetUIVolumeFromSlider(float value)
-    {
-        uiVolumeParameter = Mathf.Clamp(value, 0f, 2f);
-        SaveSettings();
-        OnUIVolumeChanged?.Invoke();
-    }
-
-    public void SetVoiceVolumeFromSlider(float value)
-    {
-        voiceVolumeParameter = Mathf.Clamp(value, 0f, 2f);
-        SaveSettings();
-        OnVoiceVolumeChanged?.Invoke();
-    }
+    public void SetLanguageFromDropdown(int index) => _language.Set(index);
+    public void SetSensitivityFromSlider(float value) => _sensitivity.Set(value);
+    public void SetMasterVolumeFromSlider(float value) => _masterVolume.Set(value);
+    public void SetMusicVolumeFromSlider(float value) => _musicVolume.Set(value);
+    public void SetSFXVolumeFromSlider(float value) => _sfxVolume.Set(value);
+    public void SetUIVolumeFromSlider(float value) => _uiVolume.Set(value);
+    public void SetVoiceVolumeFromSlider(float value) => _voiceVolume.Set(value);
+    public void StepMicrophoneMode(int direction) => _microphoneMode.Step(direction);
+    public void SetScreenResolutionFromDropdown(int index) => _screenResolution.Set(index);
+    public void SetScreenModeFromDropdown(int index) => _screenMode.Set(index);
 
     public void SetFpsLimitFromSlider(float value)
     {
-        fpsStepIndex = Mathf.Clamp(Mathf.RoundToInt(value), 0, fpsSteps.Length - 1);
-        fpsLimitParameter = fpsSteps[fpsStepIndex];
-        Application.targetFrameRate = (int)fpsLimitParameter;
-        SaveSettings();
-        OnFpsLimitChanged?.Invoke();
-    }
-
-    public void StepMicrophoneMode(int direction)
-    {
-        microphoneModeIndex = WrapIndex(microphoneModeIndex, direction, microphoneModes.Length);
-        SaveSettings();
-        OnMicrophoneModeChanged?.Invoke();
-    }
-
-    public void SetScreenResolutionFromDropdown(int index)
-    {
-        if (FilteredResolutions.Count == 0) return;
-        screenResolutionIndex = Mathf.Clamp(index, 0, FilteredResolutions.Count - 1);
-        ApplyScreenSettings();
-        SaveSettings();
-        OnScreenResolutionChanged?.Invoke();
-    }
-
-    public void SetScreenModeFromDropdown(int index)
-    {
-        screenModeIndex = Mathf.Clamp(index, 0, screenModes.Length - 1);
-        ApplyScreenSettings();
-        SaveSettings();
-        OnScreenModeChanged?.Invoke();
+        _fpsStepIndex.Set(Mathf.RoundToInt(value));
     }
 
     public void StepVSync(int direction)
     {
-        vSyncParameter = WrapIndex(vSyncParameter, direction, 2);
-        QualitySettings.vSyncCount = vSyncParameter;
-        SaveSettings();
-        OnVSyncChanged?.Invoke();
+        _vSync.Set((_vSync.Value + direction + 2) % 2);
+    }
+
+    private Dictionary<string, object> _parameterRegistry;
+    private Dictionary<string, object> _parameterLookup;
+
+    private void BuildParameterRegistry()
+    {
+        _parameterRegistry = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
+        {
+            { _language.Name,         _language         },
+            { _sensitivity.Name,      _sensitivity      },
+            { _masterVolume.Name,     _masterVolume     },
+            { _musicVolume.Name,      _musicVolume      },
+            { _sfxVolume.Name,        _sfxVolume        },
+            { _uiVolume.Name,         _uiVolume         },
+            { _voiceVolume.Name,      _voiceVolume      },
+            { _microphoneMode.Name,   _microphoneMode   },
+            { _screenResolution.Name, _screenResolution },
+            { _screenMode.Name,       _screenMode       },
+            { _fpsStepIndex.Name,     _fpsStepIndex     },
+            { _vSync.Name,            _vSync            },
+        };
+    }
+
+    private void BuildLookup()
+    {
+        _parameterLookup = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
+        {
+            { _language.Name,          (Func<object>) (() => _language.Current)       },
+            { _sensitivity.Name,       (Func<object>) (() => _sensitivity.Value)      },
+            { _masterVolume.Name,      (Func<object>) (() => _masterVolume.Value)     },
+            { _musicVolume.Name,       (Func<object>) (() => _musicVolume.Value)      },
+            { _sfxVolume.Name,         (Func<object>) (() => _sfxVolume.Value)        },
+            { _uiVolume.Name,          (Func<object>) (() => _uiVolume.Value)         },
+            { _voiceVolume.Name,       (Func<object>) (() => _voiceVolume.Value)      },
+            { _microphoneMode.Name,    (Func<object>) (() => _microphoneMode.Current) },
+            { _screenResolution.Name,  (Func<object>) (() => _screenResolution.Current)},
+            { _screenMode.Name,        (Func<object>) (() => _screenMode.Current)     },
+            { _fpsStepIndex.Name,      (Func<object>) (() => (object)FpsLimit)        },
+            { _vSync.Name,             (Func<object>) (() => _vSync.Value)            },
+        };
     }
 
     private void ApplyScreenSettings()
     {
         if (FilteredResolutions.Count == 0) return;
-        Resolution res = FilteredResolutions[screenResolutionIndex];
-        FullScreenMode mode = screenModeIndex switch
+
+        string[] parts = _screenResolution.Current.Split('x');
+        if (parts.Length != 2) return;
+        if (!int.TryParse(parts[0], out int w) || !int.TryParse(parts[1], out int h)) return;
+
+        FullScreenMode mode = _screenMode.Index switch
         {
             1 => FullScreenMode.Windowed,
             2 => FullScreenMode.FullScreenWindow,
             _ => FullScreenMode.ExclusiveFullScreen
         };
-        Screen.SetResolution(res.width, res.height, mode);
+
+        Screen.SetResolution(w, h, mode);
     }
 
     private void ApplyAllSettings()
     {
-        AudioListener.volume = masterVolumeParameter;
-        QualitySettings.vSyncCount = vSyncParameter;
-        Application.targetFrameRate = (int)fpsLimitParameter;
+        AudioListener.volume = _masterVolume.Value;
+        QualitySettings.vSyncCount = _vSync.Value;
+        Application.targetFrameRate = FpsSteps[_fpsStepIndex.Value];
         ApplyScreenSettings();
     }
 
     public void ResetToDefaults()
     {
-        languageIndex = 0;
-        sensitivityParameter = 1f;
-        masterVolumeParameter = 1f;
-        musicVolumeParameter = 1f;
-        sfxVolumeParameter = 1f;
-        uiVolumeParameter = 1f;
-        voiceVolumeParameter = 1f;
-        microphoneModeIndex = 0;
-        screenModeIndex = 0;
-        screenResolutionIndex = 0;
-        vSyncParameter = 0;
-        fpsStepIndex = Array.IndexOf(fpsSteps, 120);
-        fpsLimitParameter = fpsSteps[fpsStepIndex];
+        _language.Reset(silent: true);
+        _sensitivity.Reset(silent: true);
+        _masterVolume.Reset(silent: true);
+        _musicVolume.Reset(silent: true);
+        _sfxVolume.Reset(silent: true);
+        _uiVolume.Reset(silent: true);
+        _voiceVolume.Reset(silent: true);
+        _microphoneMode.Reset(silent: true);
+        _screenResolution.Reset(silent: true);
+        _screenMode.Reset(silent: true);
+        _fpsStepIndex.Reset(silent: true);
+        _vSync.Reset(silent: true);
 
         SaveSettings();
         ApplyAllSettings();
 
-        OnLanguageChanged?.Invoke();
-        OnSensitivityChanged?.Invoke();
-        OnMasterVolumeChanged?.Invoke();
-        OnMusicVolumeChanged?.Invoke();
-        OnSFXVolumeChanged?.Invoke();
-        OnUIVolumeChanged?.Invoke();
-        OnVoiceVolumeChanged?.Invoke();
-        OnMicrophoneDeviceChanged?.Invoke();
-        OnMicrophoneModeChanged?.Invoke();
-        OnScreenResolutionChanged?.Invoke();
-        OnScreenModeChanged?.Invoke();
-        OnFpsLimitChanged?.Invoke();
-        OnVSyncChanged?.Invoke();
+        _language.ForceNotify();
+        _sensitivity.ForceNotify();
+        _masterVolume.ForceNotify();
+        _musicVolume.ForceNotify();
+        _sfxVolume.ForceNotify();
+        _uiVolume.ForceNotify();
+        _voiceVolume.ForceNotify();
+        _microphoneMode.ForceNotify();
+        _screenResolution.ForceNotify();
+        _screenMode.ForceNotify();
+        _fpsStepIndex.ForceNotify();
+        _vSync.ForceNotify();
+
+        OnParametersChanged?.Invoke();
+    }
+
+    public T GetParameter<T>(string name) where T : class
+    {
+        if (_parameterRegistry == null) BuildParameterRegistry();
+        return _parameterRegistry.TryGetValue(name, out object param) ? param as T : null;
+    }
+    public T GetParametersValue<T>(string name)
+    {
+        if (_parameterLookup == null) BuildLookup();
+        return _parameterLookup.TryGetValue(name, out object param) && param is T val ? val : default;
     }
 }

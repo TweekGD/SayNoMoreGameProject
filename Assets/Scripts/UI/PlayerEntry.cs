@@ -17,6 +17,11 @@ public class PlayerEntry : MonoBehaviour
     private float currentVoiceVolume = 1f;
     public uint NetID => _netID;
 
+    private IPlayerKickManager playerKickManager;
+    private void Awake()
+    {
+        playerKickManager = ServiceLocator.Get<IPlayerKickManager>();
+    }
     public void Setup(string playerName, Sprite avatarSprite, uint netID, MirrorSteamworksVoice mirrorSteamworksVoice, bool isHost = false)
     {
         if (playerName == null || avatarSprite == null) { return; }
@@ -80,8 +85,8 @@ public class PlayerEntry : MonoBehaviour
     {
         if (!NetworkServer.active) return;
 
-        if (KickManager.Instance != null)
-            KickManager.Instance.KickPlayer(_netID);
+        if (playerKickManager != null)
+            playerKickManager.KickPlayer(_netID);
     }
 
     [System.Serializable]

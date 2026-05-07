@@ -13,14 +13,18 @@ public class ButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     private float startScale;
     private Tween tweenAnimation;
+
+    private IAudioManager audioManager;
     private void Awake()
     {
+        audioManager = ServiceLocator.Get<IAudioManager>();
+
         if (targetObject != null) { startScale = targetObject.transform.localScale.x; }
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (AudioManager.Instance != null && !clickSound.IsNull)
-            AudioManager.Instance.PlayOneShot(highlightSound, transform.position);
+        if (audioManager != null && !clickSound.IsNull)
+            audioManager.PlayOneShot(highlightSound, transform.position);
 
         if (targetObject == null) { return; }
 
@@ -34,8 +38,8 @@ public class ButtonHoverScale : MonoBehaviour, IPointerEnterHandler, IPointerExi
     }
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (AudioManager.Instance != null && !clickSound.IsNull)
-            AudioManager.Instance.PlayOneShot(clickSound, transform.position);
+        if (audioManager != null && !clickSound.IsNull)
+            audioManager.PlayOneShot(clickSound, transform.position);
     }
     private void OnDestroy()
     {

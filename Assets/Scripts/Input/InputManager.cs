@@ -1,11 +1,13 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour
+public class InputManager : MonoBehaviour, IInputManager
 {
     public InputActionAsset playerControls;
 
-    #region Player Action
+    #region Player Actions
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction jumpAction;
@@ -13,55 +15,59 @@ public class InputManager : MonoBehaviour
     private InputAction interactAction;
     private InputAction crouchAction;
     private InputAction fireAction;
-    private InputAction dropItemAction;
     private InputAction pauseAction;
     private InputAction voiceChatAction;
-    private InputAction knockAction;
-    private InputAction doorLockAction;
     #endregion
 
     #region Player Input
-    public Vector2 MoveInput {  get; private set; }
+    public Vector2 MoveInput { get; private set; }
     public Vector2 LookInput { get; private set; }
     public bool JumpInput { get; private set; }
     public float SprintInput { get; private set; }
     public bool InteractInput { get; private set; }
     public bool CrouchInput { get; private set; }
     public float FireInput { get; private set; }
-    public bool DropItemInput { get; private set; }
     public bool PauseInput { get; private set; }
     public float VoiceChatInput { get; private set; }
-    public bool KnockInput { get; private set; }
-    public bool DoorLockInput { get; private set; }
     #endregion
 
-    public static InputManager Instance { get; private set; }
+    private Dictionary<string, Func<object>> _inputLookup;
 
     private void Awake()
     {
-        if (Instance == null) 
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        InitActions();
+        EnableActions();
+        RegisterPlayerInputActions();
+        BuildLookup();
+    }
 
-        moveAction = playerControls.FindActionMap("Player").FindAction("Move");
-        lookAction = playerControls.FindActionMap("Player").FindAction("Look");
-        jumpAction = playerControls.FindActionMap("Player").FindAction("Jump");
-        sprintAction = playerControls.FindActionMap("Player").FindAction("Sprint");
-        interactAction = playerControls.FindActionMap("Player").FindAction("Interact");
-        crouchAction = playerControls.FindActionMap("Player").FindAction("Crouch");
-        fireAction = playerControls.FindActionMap("Player").FindAction("Fire");
-        dropItemAction = playerControls.FindActionMap("Player").FindAction("Drop Current Item");
-        pauseAction = playerControls.FindActionMap("Player").FindAction("Pause");
-        voiceChatAction = playerControls.FindActionMap("Player").FindAction("Voice Chat");
-        knockAction = playerControls.FindActionMap("Player").FindAction("Knock");
-        doorLockAction = playerControls.FindActionMap("Player").FindAction("Lock Door");
+    private void OnDestroy()
+    {
+        DisableActions();
+    }
 
+    private void Update()
+    {
+        UpdatePlayerInput();
+    }
+
+    private void InitActions()
+    {
+        InputActionMap playerMap = playerControls.FindActionMap("Player");
+
+        moveAction = playerMap.FindAction("Move");
+        lookAction = playerMap.FindAction("Look");
+        jumpAction = playerMap.FindAction("Jump");
+        sprintAction = playerMap.FindAction("Sprint");
+        interactAction = playerMap.FindAction("Interact");
+        crouchAction = playerMap.FindAction("Crouch");
+        fireAction = playerMap.FindAction("Fire");
+        pauseAction = playerMap.FindAction("Pause");
+        voiceChatAction = playerMap.FindAction("Voice Chat");
+    }
+
+    private void EnableActions()
+    {
         moveAction.Enable();
         lookAction.Enable();
         jumpAction.Enable();
@@ -69,15 +75,11 @@ public class InputManager : MonoBehaviour
         interactAction.Enable();
         crouchAction.Enable();
         fireAction.Enable();
-        dropItemAction.Enable();
         pauseAction.Enable();
         voiceChatAction.Enable();
-        knockAction.Enable();
-        doorLockAction.Enable();
-
-        RegisterPlayerInputAction();
     }
-    private void OnDestroy()
+
+    private void DisableActions()
     {
         moveAction.Disable();
         lookAction.Disable();
@@ -86,57 +88,70 @@ public class InputManager : MonoBehaviour
         interactAction.Disable();
         crouchAction.Disable();
         fireAction.Disable();
-        dropItemAction.Disable();
         pauseAction.Disable();
         voiceChatAction.Disable();
-        knockAction.Disable();
-        doorLockAction.Disable();
     }
-    private void Update()
-    {
-        UpdatePlayerInput();
-    }
-    private void UpdatePlayerInput() 
+
+    private void UpdatePlayerInput()
     {
         JumpInput = jumpAction.triggered;
         InteractInput = interactAction.triggered;
         CrouchInput = crouchAction.triggered;
-        DropItemInput = dropItemAction.triggered;
         PauseInput = pauseAction.triggered;
-        KnockInput = knockAction.triggered;
-        DoorLockInput = doorLockAction.triggered;
     }
-    private void RegisterPlayerInputAction() 
+
+    private void RegisterPlayerInputActions()
     {
-        moveAction.performed += context => MoveInput = context.ReadValue<Vector2>();
-        moveAction.canceled += context => MoveInput = Vector2.zero;
+        moveAction.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
+        moveAction.canceled += ctx => MoveInput = Vector2.zero;
 
-        lookAction.performed += context => LookInput = context.ReadValue<Vector2>();
-        lookAction.canceled += context => LookInput = Vector2.zero;
+        lookAction.performed += ctx => LookInput = ctx.ReadValue<Vector2>();
+        lookAction.canceled += ctx => LookInput = Vector2.zero;
 
-        sprintAction.performed += context => SprintInput = context.ReadValue<float>();
-        sprintAction.canceled += context => SprintInput = 0f;
+        sprintAction.performed += ctx => SprintInput = ctx.ReadValue<float>();
+        sprintAction.canceled += ctx => SprintInput = 0f;
 
-        fireAction.performed += context => FireInput = context.ReadValue<float>();
-        fireAction.canceled += context => FireInput = 0f;
+        fireAction.performed += ctx => FireInput = ctx.ReadValue<float>();
+        fireAction.canceled += ctx => FireInput = 0f;
 
-        voiceChatAction.performed += context => VoiceChatInput = context.ReadValue<float>();
-        voiceChatAction.canceled += context => VoiceChatInput = 0f;
+        voiceChatAction.performed += ctx => VoiceChatInput = ctx.ReadValue<float>();
+        voiceChatAction.canceled += ctx => VoiceChatInput = 0f;
     }
+
+    private void BuildLookup()
+    {
+        _inputLookup = new Dictionary<string, Func<object>>(StringComparer.OrdinalIgnoreCase)
+        {
+            { nameof(MoveInput),      () => MoveInput      },
+            { nameof(LookInput),      () => LookInput      },
+            { nameof(JumpInput),      () => JumpInput      },
+            { nameof(SprintInput),    () => SprintInput    },
+            { nameof(InteractInput),  () => InteractInput  },
+            { nameof(CrouchInput),    () => CrouchInput    },
+            { nameof(FireInput),      () => FireInput      },
+            { nameof(PauseInput),     () => PauseInput     },
+            { nameof(VoiceChatInput), () => VoiceChatInput },
+        };
+    }
+
+    public T GetInput<T>(string inputName)
+    {
+        if (_inputLookup.TryGetValue(inputName, out Func<object> getter) && getter() is T value)
+            return value;
+
+        return default;
+    }
+
     public void ChangeActionMap(string actionMap)
     {
-        foreach (var playerActionMap in playerControls.actionMaps)
+        foreach (InputActionMap map in playerControls.actionMaps)
         {
-            if (playerActionMap.name == "UI") { return; }
+            if (map.name == "UI") continue;
 
-            if (playerActionMap.name == actionMap)
-            {
-                playerControls.FindActionMap(playerActionMap.name).Enable();
-            }
+            if (map.name == actionMap)
+                map.Enable();
             else
-            {
-                playerControls.FindActionMap(playerActionMap.name).Disable();
-            }
+                map.Disable();
         }
     }
 }

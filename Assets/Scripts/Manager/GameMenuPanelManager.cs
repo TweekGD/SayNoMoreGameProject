@@ -36,6 +36,14 @@ public class GameMenuPanelManager : NetworkBehaviour
     public bool SettingsPanelIsActive => settingsPanelIsActive;
     public bool PlayerListIsActive => playerListIsActive;
 
+    private IInputManager inputManager;
+    private ISteamLobby steamLobby;
+
+    private void Awake()
+    {
+        inputManager = ServiceLocator.Get<IInputManager>();
+        steamLobby = ServiceLocator.Get<ISteamLobby>();
+    }
     private void Start()
     {
         if (!isLocalPlayer)
@@ -66,13 +74,16 @@ public class GameMenuPanelManager : NetworkBehaviour
     private void Update()
     {
         if (!isLocalPlayer) return;
+
         InputMenuPanel();
     }
 
     private void InputMenuPanel()
     {
-        if (InputManager.Instance.PauseInput && !inputState.MenuIsLocked)
+        if (inputManager.GetInput<float>("Pause") > 0f)
+        {
             ToggleMenuPanel();
+        }
     }
 
     public void ToggleMenuPanel()
@@ -249,14 +260,12 @@ public class GameMenuPanelManager : NetworkBehaviour
 
     private void LeaveLobby()
     {
-        if (SteamLobby.Instance)
-            SteamLobby.Instance.LeaveLobby();
+        steamLobby?.LeaveLobby();
     }
 
     private void InviteFriends()
     {
-        if (SteamLobby.Instance)
-            SteamLobby.Instance.OpenSteamInvite();
+        steamLobby?.OpenSteamInvite();
     }
 
     private void OnDestroy()

@@ -2,7 +2,7 @@ using Mirror;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KickManager : NetworkBehaviour
+public class PlayerKickManager : NetworkBehaviour, IPlayerKickManager
 {
     private readonly HashSet<string> blacklist = new HashSet<string>();
 
