@@ -6,10 +6,8 @@ public class PlayerCameraRotation : NetworkBehaviour
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private Transform bodyTransform;
     [SerializeField] private Camera playerCamera;
-    [SerializeField] private float maxAngleX = 45f;
     [SerializeField] private float maxAngleY = 90f;
     [SerializeField] private float smoothTime = 0.05f;
-
     public static Camera PlayerCamera { get; private set; }
 
     private InputState inputState;
@@ -33,7 +31,7 @@ public class PlayerCameraRotation : NetworkBehaviour
     {
         if (!isLocalPlayer) { playerCamera.gameObject.SetActive(false); }
 
-        if (inputState != null) { inputState.AddLockCursor("InitPlayer"); }
+        inputState?.AddLock(InputState.LockType.Cursor, "InitPlayer");
     }
 
     public override void OnStartLocalPlayer()
@@ -61,13 +59,13 @@ public class PlayerCameraRotation : NetworkBehaviour
 
         if (inputState != null)
         {
-            Cursor.lockState = inputState.CursorIsLocked ? CursorLockMode.Locked : CursorLockMode.None;
-            Cursor.visible = !inputState.CursorIsLocked;
+            Cursor.lockState = inputState.IsLocked(InputState.LockType.Cursor) ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = !inputState.IsLocked(InputState.LockType.Cursor);
         }
 
-        if (!inputState.CameraIsLocked)
+        if (!inputState.IsLocked(InputState.LockType.Camera))
         {
-            currentInput = inputManager.GetInput<Vector2>("Look") * sensitivityValue;
+            currentInput = inputManager.GetInput<Vector2>("LookInput") * sensitivityValue;
 
             smoothedInput.x = Mathf.SmoothDamp(smoothedInput.x, currentInput.x, ref inputVelocity.x, smoothTime);
             smoothedInput.y = Mathf.SmoothDamp(smoothedInput.y, currentInput.y, ref inputVelocity.y, smoothTime);
@@ -75,10 +73,10 @@ public class PlayerCameraRotation : NetworkBehaviour
             cameraRotation.x += smoothedInput.x;
             cameraRotation.y += smoothedInput.y;
 
-            cameraRotation.x = Mathf.Clamp(cameraRotation.x, -maxAngleX, maxAngleX);
             cameraRotation.y = Mathf.Clamp(cameraRotation.y, -maxAngleY, maxAngleY);
         }
 
-        cameraTransform.localRotation = Quaternion.Euler(-cameraRotation.y, cameraRotation.x, 0f);
+        cameraTransform.localRotation = Quaternion.Euler(-cameraRotation.y, 0f, 0f);
+        bodyTransform.rotation = Quaternion.Euler(0f, cameraRotation.x, 0f);
     }
 }

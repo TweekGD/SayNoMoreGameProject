@@ -10,18 +10,33 @@ public class UIPlayerList : NetworkBehaviour
 
     private Dictionary<uint, GameObject> entries = new Dictionary<uint, GameObject>();
 
+    private IPlayerListManager playerListManager;
+
+    private void Awake()
+    {
+        playerListManager = ServiceLocator.Get<IPlayerListManager>();
+    }
+
     private void Start()
     {
-        if (PlayerListManager.Instance != null)
+        if (playerListManager != null)
             SubscribeToSyncList();
     }
 
     private void SubscribeToSyncList()
     {
-        PlayerListManager.Instance.allPlayers.Callback += OnPlayersChanged;
+        playerListManager.OnPlayersChanged += OnPlayersChanged;
 
-        foreach (var player in PlayerListManager.Instance.allPlayers)
+        SyncList <PlayerData> playerList = playerListManager.GetAllPlayers();
+
+        foreach (var player in playerList)
             AddPlayerEntry(player);
+    }
+
+    private void OnDestroy()
+    {
+        if (playerListManager != null)
+            playerListManager.OnPlayersChanged -= OnPlayersChanged;
     }
 
     private void OnPlayersChanged(SyncList<PlayerData>.Operation op, int index, PlayerData oldItem, PlayerData newItem)
@@ -48,7 +63,7 @@ public class UIPlayerList : NetworkBehaviour
 
         PlayerEntry entryScript = entry.GetComponent<PlayerEntry>();
         if (entryScript != null)
-            entryScript.Setup(player.playerName, player.avatarSprite, player.netId, player.mirrorSteamworksVoice, player.isHost);
+            entryScript.Setup(player.playerName, player.avatarSprite, player.netId, player.isHost);
 
         entries[player.netId] = entry;
     }
@@ -68,13 +83,7 @@ public class UIPlayerList : NetworkBehaviour
         {
             PlayerEntry entryScript = entry.GetComponent<PlayerEntry>();
             if (entryScript != null)
-                entryScript.Setup(player.playerName, player.avatarSprite, player.netId, player.mirrorSteamworksVoice, player.isHost);
+                entryScript.Setup(player.playerName, player.avatarSprite, player.netId, player.isHost);
         }
-    }
-
-    private void OnDestroy()
-    {
-        if (PlayerListManager.Instance != null)
-            PlayerListManager.Instance.allPlayers.Callback -= OnPlayersChanged;
     }
 }

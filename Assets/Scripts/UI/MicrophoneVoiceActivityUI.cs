@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class MicrophoneVoiceActivityUI : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private MirrorSteamworksVoice mirrorSteamworksVoice;
+    [SerializeField] private PlayerVoiceChat playerVoiceChat;
     [SerializeField] private Image voiceLevelImage;
     [SerializeField] private Image voiceActiveImage;
     [Header("Sprites")]
@@ -15,25 +15,25 @@ public class MicrophoneVoiceActivityUI : MonoBehaviour
 
     private void Start()
     {
-        if (mirrorSteamworksVoice == null) { return; }
+        if (playerVoiceChat == null) { return; }
 
-        voiceActiveImage.sprite = mirrorSteamworksVoice.VoiceEnabled ? voiceActiveSprite : voiceDisableSprite;
+        voiceActiveImage.sprite = playerVoiceChat.VoiceEnabled ? voiceActiveSprite : voiceDisableSprite;
     }
     private void Update()
     {
         ChangeVoiceLevel();
 
-        ChangeVoiceActiveImage(mirrorSteamworksVoice.VoiceEnabled);
+        ChangeVoiceActiveImage(playerVoiceChat.VoiceEnabled);
     }
     private void ChangeVoiceLevel()
     {
-        if (mirrorSteamworksVoice == null) { return; }
+        if (playerVoiceChat == null) { return; }
 
-        voiceLevelImage.fillAmount = mirrorSteamworksVoice.CurrentVolume;
+        voiceLevelImage.fillAmount = playerVoiceChat.CurrentVolume;
     }
     private void ChangeVoiceActiveImage(bool isVoiceActive)
     {
-        if (mirrorSteamworksVoice == null) 
+        if (playerVoiceChat == null) 
         {
             voiceActiveImage.sprite = voiceDisableSprite;
             return; 
@@ -42,7 +42,7 @@ public class MicrophoneVoiceActivityUI : MonoBehaviour
         if (isVoiceActive != isActive)
         {
             isActive = isVoiceActive;
-            voiceActiveImage.sprite = mirrorSteamworksVoice.VoiceEnabled ? voiceActiveSprite : voiceDisableSprite;
+            voiceActiveImage.sprite = playerVoiceChat.VoiceEnabled ? voiceActiveSprite : voiceDisableSprite;
         }
     }
 }

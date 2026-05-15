@@ -1,96 +1,183 @@
-using DG.Tweening;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+
+public enum PanelIndex
+{
+    MenuButtons = 0,
+    Lobby = 1,
+    PlayerList = 2,
+    Settings = 3
+}
+
+[System.Serializable]
+public class UIPanel
+{
+    public SmoothAnimationUI animation;
+    public Vector2 openPos;
+    public Vector2 closePos;
+    public float duration = 0.35f;
+    public float delay = 0f;
+    [HideInInspector] public bool isActive;
+}
 
 public class MenuPanelManager : MonoBehaviour
 {
-    [SerializeField] private RectTransform lobbyPanel;
-    [SerializeField] private RectTransform settingsPanel;
-    [Header("Animation Settings")]
-    [SerializeField] private Vector2 openPos;
-    [SerializeField] private Vector2 closePos;
-    [SerializeField] private float duration = 1f;
+    [SerializeField] private InputState inputState;
+    [Space]
+    [SerializeField] private GameObject hudObject;
+    [SerializeField] private GameObject menuContainer;
+    [Space]
+    [SerializeField] private UIPanel menuButtonsPanel;
+    [SerializeField] private UIPanel lobbyPanel;
+    [SerializeField] private UIPanel playerListPanel;
+    [SerializeField] private UIPanel settingsPanel;
 
-    private bool settingsPanelIsActive;
-    private bool lobbyPanelIsActive;
+    private Dictionary<PanelIndex, UIPanel> panels;
 
-    private Tween settingsPanelTween;
-    private Tween lobbyPanelTween;
+    private IInputManager inputManager;
+    private ISteamLobby steamLobby;
+    public bool MenuIsOpen { get; private set; }
+
+    private void Awake()
+    {
+        inputManager = ServiceLocator.Get<IInputManager>();
+        steamLobby = ServiceLocator.Get<ISteamLobby>();
+
+        panels = new Dictionary<PanelIndex, UIPanel>
+        {
+            { PanelIndex.MenuButtons, menuButtonsPanel },
+            { PanelIndex.Lobby,       lobbyPanel       },
+            { PanelIndex.PlayerList,  playerListPanel  },
+            { PanelIndex.Settings,    settingsPanel    }
+        };
+    }
+
     private void Start()
     {
-        lobbyPanel.anchoredPosition = closePos;
-        settingsPanel.anchoredPosition = closePos;
-
-        lobbyPanel.gameObject.SetActive(false);
-        settingsPanel.gameObject.SetActive(false);
+        CloseMenu();
     }
+
+    private void Update()
+    {
+        MenuInput();
+    }
+
+    private void MenuInput()
+    {
+        if (inputManager == null) return;
+
+        if (inputManager.GetInput<bool>("PauseInput"))
+        {
+            MenuIsOpen = !MenuIsOpen;
+
+            if (MenuIsOpen) OpenMenu();
+            else CloseMenu();
+
+            Debug.Log($"Menu panel state: {MenuIsOpen}");
+        }
+    }
+
+    public void OpenMenu()
+    {
+        MenuIsOpen = true;
+
+        hudObject?.SetActive(false);
+        menuContainer?.SetActive(true);
+
+        if (inputState != null)
+        {
+            inputState.AddLock(InputState.LockType.Move, "PausePanel");
+            inputState.AddLock(InputState.LockType.Camera, "PausePanel");
+            inputState.RemoveLock(InputState.LockType.Cursor, "InitPlayer");
+        }
+
+        SetPanelActive(PanelIndex.MenuButtons, true);
+    }
+
+    public void CloseMenu()
+    {
+        CloseMenuPanels();
+
+        SetPanelActive(PanelIndex.MenuButtons, false, onComplete: () =>
+        {
+            MenuIsOpen = false;
+
+            menuContainer?.SetActive(false);
+            hudObject?.SetActive(true);
+
+            if (inputState != null)
+            {
+                inputState.RemoveLock(InputState.LockType.Move, "PausePanel");
+                inputState.RemoveLock(InputState.LockType.Camera, "PausePanel");
+                inputState.AddLock(InputState.LockType.Cursor, "InitPlayer");
+            }
+        });
+    }
+
     public void ToggleSettingsPanel()
     {
-        bool wasLobbyActive = lobbyPanelIsActive;
-
-        if (wasLobbyActive) LobbyPanelAnimation(false);
-
-        SettingsPanelAnimation(!settingsPanelIsActive);
+        bool open = !IsActive(PanelIndex.Settings);
+        CloseMenuPanels();
+        SetPanelActive(PanelIndex.Settings, open);
     }
+
     public void ToggleLobbyPanel()
     {
-        bool wasSettingsActive = settingsPanelIsActive;
-
-        if (wasSettingsActive) SettingsPanelAnimation(false);
-
-        LobbyPanelAnimation(!lobbyPanelIsActive);
+        bool open = !IsActive(PanelIndex.Lobby);
+        CloseMenuPanels();
+        SetPanelActive(PanelIndex.Lobby, open);
     }
-    private void SettingsPanelAnimation(bool isOpen)
-    {
-        settingsPanelTween?.Kill();
-        settingsPanelIsActive = isOpen;
 
-        if (isOpen)
-        {
-            if (!settingsPanel.gameObject.activeSelf)
-            {
-                settingsPanel.anchoredPosition = closePos;
-                settingsPanel.gameObject.SetActive(true);
-            }
-            settingsPanelTween = settingsPanel.DOAnchorPos(openPos, duration).SetEase(Ease.OutSine);
-        }
-        else
-        {
-            settingsPanelTween = settingsPanel.DOAnchorPos(closePos, duration).SetEase(Ease.OutSine)
-                .OnComplete(() => settingsPanel.gameObject.SetActive(false));
-        }
-    }
-    private void LobbyPanelAnimation(bool isOpen)
+    public void TogglePlayerListPanel()
     {
-        lobbyPanelTween?.Kill();
-        lobbyPanelIsActive = isOpen;
+        bool open = !IsActive(PanelIndex.PlayerList);
+        CloseMenuPanels();
+        SetPanelActive(PanelIndex.PlayerList, open);
+    }
+
+    private void SetPanelActive(PanelIndex index, bool isOpen, Action onComplete = null)
+    {
+        if (!HasPanel(index))
+        {
+            onComplete?.Invoke();
+            return;
+        }
+
+        UIPanel panel = panels[index];
+        panel.isActive = isOpen;
+
+        Vector2 target = isOpen ? panel.openPos : panel.closePos;
+        float delay = isOpen ? panel.delay : 0f;
+
 
         if (isOpen)
         {
-            if (!lobbyPanel.gameObject.activeSelf)
-            {
-                lobbyPanel.anchoredPosition = closePos;
-                lobbyPanel.gameObject.SetActive(true);
-            }
-            lobbyPanelTween = lobbyPanel.DOAnchorPos(openPos, duration).SetEase(Ease.OutSine);
+            panel.animation.gameObject.SetActive(true);
+            panel.animation.StartAnimationElement(target, panel.duration, delay, onComplete: onComplete);
         }
         else
         {
-            lobbyPanelTween = lobbyPanel.DOAnchorPos(closePos, duration).SetEase(Ease.OutSine)
-                .OnComplete(() => lobbyPanel.gameObject.SetActive(false));
+            panel.animation.StartAnimationElement(target, panel.duration, delay,
+                deactivateOnComplete: true, onComplete: onComplete);
         }
+
     }
-    public void GameQuit()
+
+    private bool HasPanel(PanelIndex index) =>
+        panels.TryGetValue(index, out var panel) && panel != null && panel.animation != null;
+
+    private bool IsActive(PanelIndex index) =>
+        HasPanel(index) && panels[index].isActive;
+
+    private void CloseMenuPanels()
     {
-        Application.Quit();
+        SetPanelActive(PanelIndex.Lobby, false);
+        SetPanelActive(PanelIndex.PlayerList, false);
+        SetPanelActive(PanelIndex.Settings, false);
     }
-    private void OnDestroy()
-    {
-        lobbyPanelTween?.Kill();
-        settingsPanelTween?.Kill();
-    }
-    private void OnDisable()
-    {
-        lobbyPanelTween?.Kill();
-        settingsPanelTween?.Kill();
-    }
+
+    public void LeaveLobby() { steamLobby?.LeaveLobby(); }
+    public void InviteFriends() { steamLobby?.OpenSteamInvite(); }
+    public void GameQuit() { Application.Quit(); }
 }

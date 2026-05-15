@@ -13,8 +13,8 @@ public class PlayerEntry : MonoBehaviour
     [SerializeField] private TextMeshProUGUI hostText;
 
     private uint _netID;
-    private MirrorSteamworksVoice _mirrorSteamworksVoice;
-    private float currentVoiceVolume = 1f;
+    private PlayerVoiceChat _playerVoiceChat;
+    private float _currentVoiceVolume = 1f;
     public uint NetID => _netID;
 
     private IPlayerKickManager playerKickManager;
@@ -22,14 +22,14 @@ public class PlayerEntry : MonoBehaviour
     {
         playerKickManager = ServiceLocator.Get<IPlayerKickManager>();
     }
-    public void Setup(string playerName, Sprite avatarSprite, uint netID, MirrorSteamworksVoice mirrorSteamworksVoice, bool isHost = false)
+    public void Setup(string playerName, Sprite avatarSprite, uint netID, bool isHost = false)
     {
         if (playerName == null || avatarSprite == null) { return; }
 
         playerNameText.text = playerName;
         avatarImage.sprite = avatarSprite;
         _netID = netID;
-        _mirrorSteamworksVoice = mirrorSteamworksVoice;
+        //_mirrorSteamworksVoice = mirrorSteamworksVoice;
 
         bool isLocalPlayer = NetworkClient.localPlayer != null && NetworkClient.localPlayer.netId == _netID;
         bool amIHost = NetworkServer.active;
@@ -46,7 +46,7 @@ public class PlayerEntry : MonoBehaviour
         switchVolume.rightButton.onClick.AddListener(IncreaseVolume);
         kickButton.onClick.AddListener(KickPlayer);
 
-        UpdateSwitchText(currentVoiceVolume);
+        UpdateSwitchText(_currentVoiceVolume);
     }
 
     private void OnDestroy()
@@ -58,23 +58,23 @@ public class PlayerEntry : MonoBehaviour
 
     private void DecreaseVolume()
     {
-        currentVoiceVolume -= 0.1f;
-        currentVoiceVolume = Mathf.Clamp(currentVoiceVolume, 0f, 2f);
-        ChangePlayerVolume(currentVoiceVolume);
-        UpdateSwitchText(currentVoiceVolume);
+        _currentVoiceVolume -= 0.1f;
+        _currentVoiceVolume = Mathf.Clamp(_currentVoiceVolume, 0f, 2f);
+        ChangePlayerVolume(_currentVoiceVolume);
+        UpdateSwitchText(_currentVoiceVolume);
     }
 
     private void IncreaseVolume()
     {
-        currentVoiceVolume += 0.1f;
-        currentVoiceVolume = Mathf.Clamp(currentVoiceVolume, 0f, 2f);
-        ChangePlayerVolume(currentVoiceVolume);
-        UpdateSwitchText(currentVoiceVolume);
+        _currentVoiceVolume += 0.1f;
+        _currentVoiceVolume = Mathf.Clamp(_currentVoiceVolume, 0f, 2f);
+        ChangePlayerVolume(_currentVoiceVolume);
+        UpdateSwitchText(_currentVoiceVolume);
     }
 
     private void ChangePlayerVolume(float volume)
     {
-        _mirrorSteamworksVoice.SetVoiceVolume(volume);
+        _playerVoiceChat.SetVoiceVolume(volume);
     }
 
     private void UpdateSwitchText(float value)

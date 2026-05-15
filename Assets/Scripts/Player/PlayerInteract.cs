@@ -10,20 +10,23 @@ public class PlayerInteract : NetworkBehaviour
     [SerializeField] private float maxDistance;
     [SerializeField] private Vector3 direction = Vector3.forward;
     [SerializeField] private LayerMask layer;
-    public bool OnInteractebleCollider { get; private set; }
+
+    public bool OnInteractableCollider { get; private set; }
     public IInteractable LastTarget { get; private set; }
-    public event Action<bool, KeyBind[]> OnInteracted;
+
+    public event Action<bool> OnInteracted;
 
     private void Update()
     {
-        if (!isLocalPlayer) { return; }
+        if (!isLocalPlayer) return;
 
         CheckForInteractable();
 
-        if (inputState.CameraIsLocked || !inputState.CursorIsLocked) { return; }
+        if (!inputState.IsLocked(InputState.LockType.Camera) || !inputState.IsLocked(InputState.LockType.Cursor)) return;
 
         LastTarget?.Interact(playerObject);
     }
+
     private void CheckForInteractable()
     {
         bool hitDetected = Physics.Raycast(
@@ -37,51 +40,42 @@ public class PlayerInteract : NetworkBehaviour
 
         IInteractable newTarget = null;
         if (hitDetected && hit.collider != null)
-        {
             hit.collider.TryGetComponent(out newTarget);
-        }
 
         UpdateInteractionState(newTarget);
     }
+
     private void UpdateInteractionState(IInteractable newTarget)
     {
         if (LastTarget != newTarget)
         {
-            if (LastTarget != null)
-                LastTarget.OnInteractedEnd(playerObject);
-
+            LastTarget?.OnInteractedEnd(playerObject);
             LastTarget = newTarget;
-
-            if (LastTarget != null)
-                LastTarget.OnInteractedStart(playerObject);
+            LastTarget?.OnInteractedStart(playerObject);
         }
 
         bool isInteracting = newTarget != null;
-
-        KeyBind[] targetKeyBind = null;
-
-        if (newTarget != null)
+        if (isInteracting != OnInteractableCollider)
         {
-            targetKeyBind = newTarget.KeyBind;
-        }
-
-        if (isInteracting != OnInteractebleCollider)
-        {
-            OnInteractebleCollider = isInteracting;
-            OnInteracted?.Invoke(OnInteractebleCollider, targetKeyBind);
+            OnInteractableCollider = isInteracting;
+            OnInteracted?.Invoke(OnInteractableCollider);
         }
     }
 }
-[Serializable]
-public class KeyBind
+
+public interface IInteractable : IInteract, IInteractedStart, IInteractedEnd { }
+
+public interface IInteract
 {
-    public string keyBind;
-    public string keyDescription;
+    public void Interact(GameObject player = null);
 }
-public interface IInteractable
+
+public interface IInteractedStart
 {
-    void Interact(GameObject player = null);
-    void OnInteractedStart(GameObject player = null);
-    void OnInteractedEnd(GameObject player = null);
-    public KeyBind[] KeyBind { get; set; }
+    public void OnInteractedStart(GameObject player = null);
+}
+
+public interface IInteractedEnd
+{
+    public void OnInteractedEnd(GameObject player = null);
 }

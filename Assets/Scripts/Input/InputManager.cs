@@ -55,15 +55,15 @@ public class InputManager : MonoBehaviour, IInputManager
     {
         InputActionMap playerMap = playerControls.FindActionMap("Player");
 
-        moveAction = playerMap.FindAction("Move");
-        lookAction = playerMap.FindAction("Look");
-        jumpAction = playerMap.FindAction("Jump");
-        sprintAction = playerMap.FindAction("Sprint");
-        interactAction = playerMap.FindAction("Interact");
-        crouchAction = playerMap.FindAction("Crouch");
-        fireAction = playerMap.FindAction("Fire");
-        pauseAction = playerMap.FindAction("Pause");
-        voiceChatAction = playerMap.FindAction("Voice Chat");
+        moveAction = playerMap.FindAction("MoveInput");
+        lookAction = playerMap.FindAction("LookInput");
+        jumpAction = playerMap.FindAction("JumpInput");
+        sprintAction = playerMap.FindAction("SprintInput");
+        interactAction = playerMap.FindAction("InteractInput");
+        crouchAction = playerMap.FindAction("CrouchInput");
+        fireAction = playerMap.FindAction("FireInput");
+        pauseAction = playerMap.FindAction("PauseInput");
+        voiceChatAction = playerMap.FindAction("VoiceChatInput");
     }
 
     private void EnableActions()

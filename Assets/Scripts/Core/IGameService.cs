@@ -1,4 +1,5 @@
 using FMODUnity;
+using Mirror;
 using System;
 using UnityEngine;
 
@@ -34,4 +35,12 @@ public interface ISteamLobby : IGameService
 public interface IPlayerKickManager : IGameService
 {
     public void KickPlayer(uint netId);
+}
+
+public interface IPlayerListManager : IGameService
+{
+    public event Action<SyncList<PlayerData>.Operation, int, PlayerData, PlayerData> OnPlayersChanged;
+    public void AddPlayer(uint netId, string playerName, Sprite avatarSprite);
+    public void RemovePlayer(uint netId);
+    public SyncList<PlayerData> GetAllPlayers();
 }

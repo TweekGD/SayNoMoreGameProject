@@ -23,7 +23,13 @@ public class CustomNetworkManager : NetworkManager
 
         ReturnToMenu();
     }
+
     private void ReturnToMenu()
+    {
+        UnlockCursor();
+    }
+
+    private void UnlockCursor()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

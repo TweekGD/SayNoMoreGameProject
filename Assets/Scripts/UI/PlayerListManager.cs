@@ -1,54 +1,41 @@
-using UnityEngine;
 using Mirror;
+using System;
+using UnityEngine;
 
-public class PlayerListManager : NetworkBehaviour
+public class PlayerListManager : NetworkBehaviour, IPlayerListManager
 {
-    public static PlayerListManager Instance;
-
     public readonly SyncList<PlayerData> allPlayers = new SyncList<PlayerData>();
 
-    private void Awake()
+    public event Action<SyncList<PlayerData>.Operation, int, PlayerData, PlayerData> OnPlayersChanged;
+
+    private void OnEnable()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        allPlayers.Callback += OnPlayersChanged;
+    }
+
+    private void OnDisable()
+    {
+        allPlayers.Callback -= OnPlayersChanged;
     }
 
     [Server]
-    public void AddPlayer(uint netId, string playerName, Sprite avatarSprite, MirrorSteamworksVoice mirrorSteamworksVoice)
+    public void AddPlayer(uint netId, string playerName, Sprite avatarSprite)
     {
-        bool isHost = false;
-        foreach (var conn in NetworkServer.connections.Values)
-        {
-            if (conn.identity != null && conn.identity.netId == netId && conn.connectionId == 0)
-            {
-                isHost = true;
-                break;
-            }
-        }
+        bool isHost = NetworkServer.connections.TryGetValue(0, out NetworkConnectionToClient hostConn)
+            && hostConn.identity != null
+            && hostConn.identity.netId == netId;
 
-        PlayerData newPlayer = new PlayerData(netId, playerName, avatarSprite, isHost, mirrorSteamworksVoice);
-        allPlayers.Add(newPlayer);
-        Debug.Log($"Player added to player list: {playerName} (ID={netId}, isHost={isHost})");
+        allPlayers.Add(new PlayerData(netId, playerName, avatarSprite, isHost));
     }
 
     [Server]
     public void RemovePlayer(uint netId)
     {
-        for (int i = 0; i < allPlayers.Count; i++)
-        {
-            if (allPlayers[i].netId == netId)
-            {
-                PlayerData removed = allPlayers[i];
-                allPlayers.RemoveAt(i);
-                Debug.Log($"Player removed in player list: {removed.playerName} (ID={netId})");
-                break;
-            }
-        }
+        int index = allPlayers.FindIndex(p => p.netId == netId);
+        if (index < 0) return;
+
+        allPlayers.RemoveAt(index);
     }
+
+    public SyncList<PlayerData> GetAllPlayers() { return allPlayers; }
 }

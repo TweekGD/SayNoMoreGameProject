@@ -8,14 +8,12 @@ public struct PlayerData
     public string playerName;
     public Sprite avatarSprite;
     public bool isHost;
-    public MirrorSteamworksVoice mirrorSteamworksVoice;
 
-    public PlayerData(uint id, string name, Sprite avatar, bool host, MirrorSteamworksVoice voice)
+    public PlayerData(uint id, string name, Sprite avatar, bool host)
     {
         netId = id;
         playerName = name;
         avatarSprite = avatar;
         isHost = host;
-        mirrorSteamworksVoice = voice;
     }
 }

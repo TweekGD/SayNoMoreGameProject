@@ -24,8 +24,8 @@ public class MenuCameraRotation : MonoBehaviour
     }
     private void CameraRotation()
     {
-        cameraRotation.x += inputManager.GetInput<Vector2>("Look").x * sensitivityValue;
-        cameraRotation.y += inputManager.GetInput<Vector2>("Look").y * sensitivityValue;
+        cameraRotation.x += inputManager.GetInput<Vector2>("LookInput").x * sensitivityValue;
+        cameraRotation.y += inputManager.GetInput<Vector2>("LookInput").y * sensitivityValue;
 
         cameraRotation.x = Mathf.Clamp(cameraRotation.x, -cameraAngle, cameraAngle);
         cameraRotation.y = Mathf.Clamp(cameraRotation.y, -cameraAngle, cameraAngle);

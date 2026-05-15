@@ -1454,7 +1454,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: '>'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 77ae6cf8a89608c40ae282e1e487c4c9, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: 2530963819819706962, guid: 77ae6cf8a89608c40ae282e1e487c4c9, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2888,7 +2888,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 6939215491068180015}
         m_TargetAssemblyTypeName: MenuPanelManager, Assembly-CSharp
         m_MethodName: GameQuit
         m_Mode: 1
@@ -3051,8 +3051,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5239850346708718613}
-        m_TargetAssemblyTypeName: GameMenuPanelManager, Assembly-CSharp
+      - m_Target: {fileID: 6939215491068180015}
+        m_TargetAssemblyTypeName: MenuPanelManager, Assembly-CSharp
         m_MethodName: ToggleSettingsPanel
         m_Mode: 1
         m_Arguments:
@@ -5796,7 +5796,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7530396568716278655}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6939215491068180015}
+        m_TargetAssemblyTypeName: MenuPanelManager, Assembly-CSharp
+        m_MethodName: InviteFriends
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &8930714738324088126
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6712,12 +6724,10 @@ GameObject:
   - component: {fileID: 1801041427343491815}
   - component: {fileID: 4630093912424681985}
   - component: {fileID: 2520430291100350012}
-  - component: {fileID: 5507989832099917403}
-  - component: {fileID: 5239850346708718613}
   - component: {fileID: 4056420357051466055}
-  - component: {fileID: 7103352678132745605}
   - component: {fileID: 6482183029828270352}
   - component: {fileID: 374854492108007166}
+  - component: {fileID: 6939215491068180015}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -6810,78 +6820,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &5507989832099917403
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3068519122624550572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00c92b04ee947934abf48f2cfde5c3e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SettingsInitParameters
-  languageDropdown: {fileID: 7869930628419570385}
-  sensitivity:
-    slider: {fileID: 6915993043506933946}
-    valueText: {fileID: 1404856315216012407}
-  masterVolume:
-    slider: {fileID: 9123539750528477171}
-    valueText: {fileID: 399145146378105537}
-  musicVolume:
-    slider: {fileID: 304749212840456077}
-    valueText: {fileID: 1171497230203743403}
-  sfxVolume:
-    slider: {fileID: 6437703140797341644}
-    valueText: {fileID: 7896069448711802169}
-  uiVolume:
-    slider: {fileID: 9021838871630513561}
-    valueText: {fileID: 1421336311547817214}
-  voiceVolume:
-    slider: {fileID: 857339514502949256}
-    valueText: {fileID: 2710993031161061282}
-  microphoneMode:
-    leftButton: {fileID: 3150445733869533467}
-    rightButton: {fileID: 3541303977342770111}
-    valueText: {fileID: 1182951435151963430}
-  screenResolutionDropdown: {fileID: 4104809214006914748}
-  screenModeDropdown: {fileID: 238979274192457110}
-  fpsLimit:
-    slider: {fileID: 53546340756010192}
-    valueText: {fileID: 4029324620935811169}
-  vSync:
-    leftButton: {fileID: 5983636511935619346}
-    rightButton: {fileID: 3970222204671043998}
-    valueText: {fileID: 1461280947905832311}
-  resetButton: {fileID: 1598377643949515823}
---- !u!114 &5239850346708718613
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3068519122624550572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c0a6cb445dbdb345868baa47fea22a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameMenuPanelManager
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  interfacePanel: {fileID: 8287831620022700102}
-  menuPanel: {fileID: 7554597392466747133}
-  menuButtonsPanel: {fileID: 7974945101492403215}
-  settingsPanel: {fileID: 3252515818158145147}
-  playerList: {fileID: 1913799838012678661}
-  inputState: {fileID: 178135916399216267}
-  inviteFriendsButton: {fileID: 7028129420253429334}
-  leaveLobbyButton: {fileID: 6665062477846181270}
-  menuCanvasGroup: {fileID: 4680086714629079013}
-  openPos: {x: -480, y: 0}
-  closePos: {x: 480, y: 0}
-  duration: 1
 --- !u!114 &4056420357051466055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6894,26 +6832,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19b674e3d7a32e745864d9ee31a73cdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MicrophoneVoiceActivityUI
-  mirrorSteamworksVoice: {fileID: 1810468616477960037}
+  playerVoiceChat: {fileID: 1810468616477960037}
   voiceLevelImage: {fileID: 6067842908721416841}
   voiceActiveImage: {fileID: 3272297572545383394}
   voiceActiveSprite: {fileID: 21300000, guid: f2f9800a1d8f6624db87fcc401513e95, type: 3}
   voiceDisableSprite: {fileID: 21300000, guid: e4a9e167cc90cae43bb03120ccbe26ef, type: 3}
---- !u!114 &7103352678132745605
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3068519122624550572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a6e6c88b1be0264182d7759ca42d8ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractivePanelUI
-  playerInteract: {fileID: 1950911233578949234}
-  fadeSpeed: 3
-  canvasGroup: {fileID: 3069409306091184486}
 --- !u!114 &6482183029828270352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6944,6 +6867,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FadeScreenEffect
   canvasGroup: {fileID: 1289208254942515721}
+--- !u!114 &6939215491068180015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3068519122624550572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8e06002733dc17408323c1406f719aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MenuPanelManager
+  inputState: {fileID: 178135916399216267}
+  hudObject: {fileID: 5466651979919612339}
+  menuContainer: {fileID: 3701289621025168074}
+  menuButtonsPanel:
+    animation: {fileID: 2154767122652200576}
+    openPos: {x: 480, y: 0}
+    closePos: {x: -480, y: 0}
+    duration: 1
+    delay: 0
+    isActive: 0
+  lobbyPanel:
+    animation: {fileID: 0}
+    openPos: {x: 0, y: 0}
+    closePos: {x: 0, y: 0}
+    duration: 1
+    delay: 0
+    isActive: 0
+  playerListPanel:
+    animation: {fileID: 6540539145960810389}
+    openPos: {x: -480, y: 0}
+    closePos: {x: 480, y: 0}
+    duration: 1
+    delay: 0
+    isActive: 0
+  settingsPanel:
+    animation: {fileID: 4569420488621583947}
+    openPos: {x: -480, y: 0}
+    closePos: {x: 480, y: 0}
+    duration: 1
+    delay: 0
+    isActive: 0
 --- !u!1 &3092076127043370245
 GameObject:
   m_ObjectHideFlags: 0
@@ -7706,7 +7672,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: '>'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 77ae6cf8a89608c40ae282e1e487c4c9, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: 2530963819819706962, guid: 77ae6cf8a89608c40ae282e1e487c4c9, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -7785,8 +7751,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7974945101492403215}
+  - component: {fileID: 2154767122652200576}
   m_Layer: 5
-  m_Name: Main Menu Panel
+  m_Name: Menu Buttons Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7814,6 +7781,18 @@ RectTransform:
   m_AnchoredPosition: {x: 480, y: 0}
   m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2154767122652200576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3488824801957235361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f436e5549d3aa244974fdc3df9266ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SmoothAnimationUI
 --- !u!1 &3493452547054194978
 GameObject:
   m_ObjectHideFlags: 0
@@ -8168,7 +8147,6 @@ GameObject:
   - component: {fileID: 7554597392466747133}
   - component: {fileID: 137328763250317744}
   - component: {fileID: 7983796456220202831}
-  - component: {fileID: 4680086714629079013}
   m_Layer: 5
   m_Name: Menu Panel
   m_TagString: Untagged
@@ -8236,18 +8214,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!225 &4680086714629079013
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3701289621025168074}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &3702777047691147595
 GameObject:
   m_ObjectHideFlags: 0
@@ -8965,7 +8931,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: '>'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 77ae6cf8a89608c40ae282e1e487c4c9, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: 2530963819819706962, guid: 77ae6cf8a89608c40ae282e1e487c4c9, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -9684,6 +9650,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3252515818158145147}
+  - component: {fileID: 4569420488621583947}
   m_Layer: 5
   m_Name: Settings Panel
   m_TagString: Untagged
@@ -9711,6 +9678,18 @@ RectTransform:
   m_AnchoredPosition: {x: -480, y: 0}
   m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4569420488621583947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4332250981658085446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f436e5549d3aa244974fdc3df9266ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SmoothAnimationUI
 --- !u!1 &4384329836441578484
 GameObject:
   m_ObjectHideFlags: 0
@@ -11821,9 +11800,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5239850346708718613}
-        m_TargetAssemblyTypeName: GameMenuPanelManager, Assembly-CSharp
-        m_MethodName: ToggleMenuPanel
+      - m_Target: {fileID: 6939215491068180015}
+        m_TargetAssemblyTypeName: MenuPanelManager, Assembly-CSharp
+        m_MethodName: CloseMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12655,8 +12634,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5239850346708718613}
-        m_TargetAssemblyTypeName: GameMenuPanelManager, Assembly-CSharp
+      - m_Target: {fileID: 6939215491068180015}
+        m_TargetAssemblyTypeName: MenuPanelManager, Assembly-CSharp
         m_MethodName: TogglePlayerListPanel
         m_Mode: 1
         m_Arguments:
@@ -13177,6 +13156,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1913799838012678661}
+  - component: {fileID: 6540539145960810389}
   m_Layer: 5
   m_Name: Players List Panel
   m_TagString: Untagged
@@ -13204,6 +13184,18 @@ RectTransform:
   m_AnchoredPosition: {x: -480, y: 0}
   m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &6540539145960810389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6484493207725905657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f436e5549d3aa244974fdc3df9266ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SmoothAnimationUI
 --- !u!1 &6587583769885533518
 GameObject:
   m_ObjectHideFlags: 0
@@ -14430,9 +14422,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8176546017204104651}
   - component: {fileID: 1950911233578949234}
-  - component: {fileID: 178135916399216267}
   - component: {fileID: 1269341938233625295}
   - component: {fileID: 3387499665417206212}
+  - component: {fileID: 178135916399216267}
   - component: {fileID: 7179333660854656740}
   m_Layer: 6
   m_Name: Player
@@ -14485,18 +14477,6 @@ MonoBehaviour:
   layer:
     serializedVersion: 2
     m_Bits: 9
---- !u!114 &178135916399216267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7083286197146636746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03fbe57004a088944a8d0ea3994f3cb5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputState
 --- !u!114 &1269341938233625295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14515,7 +14495,6 @@ MonoBehaviour:
   cameraTransform: {fileID: 3799530796124300313}
   bodyTransform: {fileID: 8176546017204104651}
   playerCamera: {fileID: 5657697543803232428}
-  maxAngleX: 45
   maxAngleY: 90
   smoothTime: 0.05
 --- !u!114 &3387499665417206212
@@ -14533,11 +14512,20 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  playerName: 
-  avatarSprite: {fileID: 0}
   defaultName: Player
   defaultAvatar: {fileID: 1858346521, guid: a020aa587e26f364fab82592c3d0dda9, type: 3}
-  mirrorSteamworksVoice: {fileID: 1810468616477960037}
+--- !u!114 &178135916399216267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7083286197146636746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03fbe57004a088944a8d0ea3994f3cb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputState
 --- !u!114 &7179333660854656740
 MonoBehaviour:
   m_ObjectHideFlags: 0

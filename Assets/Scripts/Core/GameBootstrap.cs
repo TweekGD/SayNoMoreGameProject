@@ -3,11 +3,13 @@ using UnityEngine;
 [DefaultExecutionOrder(-99999)]
 public class GameBootstrapper : MonoBehaviour
 {
+    [Header("Service Locator")]
     [SerializeField] private AudioManager audioManager;
     [SerializeField] private SettingsManager settingsManager;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private SteamLobby steamLobby;
     [SerializeField] private PlayerKickManager playerKickManager;
+    [SerializeField] private PlayerListManager playerListManager;
 
     private void Awake()
     {
@@ -16,6 +18,7 @@ public class GameBootstrapper : MonoBehaviour
         ServiceLocator.Register<IInputManager>(inputManager);
         ServiceLocator.Register<ISteamLobby>(steamLobby);
         ServiceLocator.Register<IPlayerKickManager>(playerKickManager);
+        ServiceLocator.Register<IPlayerListManager>(playerListManager);
 
         DontDestroyOnLoad(gameObject);
     }

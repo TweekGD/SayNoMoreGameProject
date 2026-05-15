@@ -4,19 +4,22 @@ using UnityEngine;
 
 public class PlayerInfo : NetworkBehaviour
 {
-    [SyncVar(hook = nameof(OnPlayerNameChanged))] public string playerName;
-    [SyncVar] public Sprite avatarSprite;
-
     [Header("Default Player Info")]
     public string defaultName = "Player";
     public Sprite defaultAvatar;
-    public MirrorSteamworksVoice mirrorSteamworksVoice;
+
+    [SyncVar(hook = nameof(OnPlayerNameChanged))] private string playerName;
+    [SyncVar] private Sprite avatarSprite;
 
     private PlayerNameOverHead playerNameOverHead;
+    private IPlayerListManager playerListManager;
+    public string PlayerName => playerName;
+    public Sprite AvatarSprite => avatarSprite;
 
     private void Awake()
     {
         playerNameOverHead = GetComponentInChildren<PlayerNameOverHead>(true);
+        playerListManager = ServiceLocator.Get<IPlayerListManager>();
     }
 
     private void Start()
@@ -26,7 +29,8 @@ public class PlayerInfo : NetworkBehaviour
             string name = SteamAPI.Init() ? SteamFriends.GetPersonaName() : defaultName + Random.Range(100, 999);
             Sprite avatar = SteamAPI.Init() ? Texture2DToSprite(LoadAvatar(SteamUser.GetSteamID())) : defaultAvatar;
 
-            CmdSetPlayerInfo(name, avatar, mirrorSteamworksVoice);
+            CmdSetPlayerInfo(name, avatar);
+            CmdAddPlayerToList(name, avatar);
         }
     }
 
@@ -86,27 +90,33 @@ public class PlayerInfo : NetworkBehaviour
     }
 
     [Command]
-    private void CmdSetPlayerInfo(string name, Sprite avatar, MirrorSteamworksVoice _mirrorSteamworksVoice)
+    private void CmdSetPlayerInfo(string name, Sprite avatar)
     {
         playerName = name;
         avatarSprite = avatar;
+    }
 
-        if (PlayerListManager.Instance != null )
-            PlayerListManager.Instance.AddPlayer(netId, playerName, avatarSprite, _mirrorSteamworksVoice);
+    [Command]
+    private void CmdAddPlayerToList(string name, Sprite avatar)
+    {
+        playerListManager?.AddPlayer(netId, name, avatar);
+    }
+
+    private void RemovePlayerFromList()
+    {
+        playerListManager?.RemovePlayer(netId);
     }
 
     [Server]
     private void OnDestroy()
     {
-        if (PlayerListManager.Instance != null)
-            PlayerListManager.Instance.RemovePlayer(netId);
+        RemovePlayerFromList();
     }
 
     public override void OnStopServer()
     {
         base.OnStopServer();
 
-        if (PlayerListManager.Instance != null)
-            PlayerListManager.Instance.RemovePlayer(netId);
+        RemovePlayerFromList();
     }
 }

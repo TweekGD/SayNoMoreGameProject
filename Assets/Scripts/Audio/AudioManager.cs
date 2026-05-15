@@ -41,7 +41,7 @@ public class AudioManager : MonoBehaviour, IAudioManager
     }
     private void OnDisable()
     {
-        if (settingsManager != null) { settingsManager.OnParametersChanged += ChangeAllVolumeValue; }
+        if (settingsManager != null) { settingsManager.OnParametersChanged -= ChangeAllVolumeValue; }
     }
     private void Start()
     {

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-public class MirrorSteamworksVoice : NetworkBehaviour
+public class PlayerVoiceChat : NetworkBehaviour
 {
     [SerializeField] private EventReference _voiceEventReference;
 
@@ -268,7 +268,7 @@ public class MirrorSteamworksVoice : NetworkBehaviour
 
         if (inputManager == null) return;
 
-        float voiceInput = inputManager.GetInput<float>("Voice Chat");
+        float voiceInput = inputManager.GetInput<float>("VoiceChatInput");
 
         if (_microphoneMode == MicrophoneMode.Toggle)
             HandleToggleMode(voiceInput);
